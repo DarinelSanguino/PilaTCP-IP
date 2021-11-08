@@ -11,7 +11,7 @@ void inic_tabla_arp(tabla_arp_t **tabla_arp) {
 
 entrada_arp_t * busqueda_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
-		entrada_arp_t *entrada_arp = (entrada_arp_t *)(nodo_actual->elemento);
+		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
 		if(!strncmp(entrada_arp->dir_ip.dir_ip, dir_ip, TAM_DIR_IP)) {
 			return entrada_arp;
 		}
@@ -24,12 +24,12 @@ bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_ar
 	if(entrada_arp_antigua) {
 		eliminar_entrada_tabla_arp(tabla_arp, entrada_arp->dir_ip.dir_ip);
 	}
-	return insertar(tabla_arp->entradas_arp, entrada_arp, sizeof(entrada_arp_t));
+	return insertar(tabla_arp->entradas_arp, &entrada_arp, sizeof(entrada_arp_t *));
 }
 
 void eliminar_entrada_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
-		entrada_arp_t *entrada_arp = (entrada_arp_t *)(nodo_actual->elemento);
+		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
 		if(!strncmp(entrada_arp->dir_ip.dir_ip, dir_ip, TAM_DIR_IP)) {
 			eliminar(tabla_arp->entradas_arp, nodo_actual);
 		}
@@ -51,8 +51,8 @@ void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_
 
 void mostrar_tabla_arp(tabla_arp_t *tabla_arp) {
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
-		entrada_arp_t *entrada_arp = (entrada_arp_t *)(nodo_actual->elemento);
-		printf("IP: %s, MAC:%u%u%u%u%u%u, INTF: %s\n", 
+		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
+		printf("IP: %s, MAC:%u%u%u%u%u%u, INTF: %s\n",
 			entrada_arp->dir_ip.dir_ip,
 			entrada_arp->dir_mac.dir_mac[0],
 			entrada_arp->dir_mac.dir_mac[1],

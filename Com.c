@@ -34,7 +34,7 @@ static void revisar_set_fd(Lista_t *lista, fd_set *set_fd_sock) {
 	struct sockaddr_in dir_transmisor;
 	int long_dir = sizeof(struct sockaddr);
 	ITERAR_LISTA_ENLAZADA(lista) {
-		nodo_t *nodo_red = (nodo_t *)(nodo_actual->elemento);
+		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
 		if(FD_ISSET(nodo_red->fd_sock_udp, set_fd_sock)) {
 			memset(buffer_rec, 0, MAX_TAMANO_BUFFER_PAQ);
 			//**********************************PENDIENTE**********************************************
@@ -63,7 +63,7 @@ static void revisar_set_fd(Lista_t *lista, fd_set *set_fd_sock) {
 
 static void agregar_set_fd(Lista_t *lista, fd_set *set_fd_sock, int *max_sock_fd) {
 	ITERAR_LISTA_ENLAZADA(lista) {
-		nodo_t *nodo_red = (nodo_t *)(nodo_actual->elemento);
+		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
 		if(!nodo_red->fd_sock_udp) continue;
 
 		if(nodo_red->fd_sock_udp > *max_sock_fd) {
@@ -190,5 +190,4 @@ void iniciar_hilo_receptor_de_red(grafico_t *topo) {
 	pthread_attr_setdetachstate(&atrib, PTHREAD_CREATE_DETACHED);
 
 	pthread_create(&hilo_receptor, &atrib, _iniciar_hilo_receptor_de_red, (void *)topo);
-
 }

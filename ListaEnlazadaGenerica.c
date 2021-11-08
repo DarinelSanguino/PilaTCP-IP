@@ -16,7 +16,7 @@ bool insertar(Lista_t *lista, void *elemento, size_t tam_elemento) {
 		if(lista->vacia) {
 			lista->nodo_inicio = nodo_lista;
 			lista->nodo_final = nodo_lista;
-			lista->vacia = false;		
+			lista->vacia = false;
 		}
 		else {
 			lista->nodo_final->sig_nodo = nodo_lista;
@@ -54,14 +54,3 @@ void eliminar(Lista_t *lista, NodoLista_t *nodo_lista) {
 bool lista_vacia(Lista_t *lista) {
 	return lista->vacia;
 }
-
-/*void recorrer_lista(Lista_t *lista, void (*operacion) (const void *elemento)) {
-	if(lista_vacia(lista)) {
-		return;
-	}
-	NodoLista_t *nodo_actual = lista->nodo_inicio;
-	while(nodo_actual != NULL) {
-		operacion(nodo_actual->elemento);
-		nodo_actual = nodo_actual->sig_nodo;
-	}
-}*/

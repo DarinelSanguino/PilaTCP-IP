@@ -11,8 +11,7 @@ grafico_t * crear_nuevo_grafico(const char *nombre_topologia) {
 	return grafico;
 }
 
-nodo_t * crear_nodo_grafico(grafico_t *grafico, const char *nombre_nodo) {
-	printf("Tamano de nodo_t es %lu\n", sizeof(nodo_t));
+nodo_t * crear_nodo_grafico(grafico_t *grafico, const char *nombre_nodo) {	
 	nodo_t *nodo = malloc(sizeof(nodo_t));
 	inicializar_nodo(nodo);
 	strncpy(nodo->nombre_nodo, nombre_nodo, TAM_NOMBRE_NODO);
@@ -62,7 +61,7 @@ void inicializar_interface(interface_t *interface) {
 void inicializar_nodo(nodo_t *nodo) {
 	nodo->nombre_nodo[0] = '\0';
 	for(int i = 0; i < MAX_INTF_POR_NODO; i++) {
-		nodo->intf[i] = NULL;		
+		nodo->intf[i] = NULL;	
 	}
 	nodo->prop_nodo = malloc(sizeof(prop_nodo_t));
 	init_prop_nodo(nodo->prop_nodo);
@@ -72,22 +71,11 @@ void inicializar_nodo(nodo_t *nodo) {
 /**********CAMBIO_TEMPORAL***************************/
 nodo_t* obtener_elemento(Lista_t *lista, char *nombre_nodo) {
 	ITERAR_LISTA_ENLAZADA(lista) {
-		nodo_t *nodo_red = (nodo_t *)(nodo_actual->elemento);
+		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
 		if(!strncmp(nodo_red->nombre_nodo, nombre_nodo, TAM_NOMBRE_NODO)) {
 			return nodo_red;
 		}
 	} FIN_ITERACION;
-
-	/*if(lista_vacia(lista)) {
-		return NULL;
-	}
-	NodoLista_t *nodo_actual = lista->nodo_inicio;
-	while(nodo_actual != NULL) {
-		if(!strcmp(nodo_actual->nodo->nombre_nodo, nombre_nodo)) {
-			return nodo_actual->elemento;
-		}
-		nodo_actual = nodo_actual->sig_nodo;
-	}*/
 	return NULL;
 }
 
@@ -100,11 +88,12 @@ void inicializar_grafico(grafico_t *grafico) {
 void mostrar_grafico(const grafico_t *grafico) {
 	/*****PENDIENTE:violación de segmento*****/
 	printf("%s\n", grafico->nombre_topologia);
-	//nodo_t *primero = (nodo_t *)(grafico->lista_nodos->nodo_inicio->elemento);
-	//printf("Nodo primero: %s", primero->nombre_nodo);
+	nodo_t *primero = *(nodo_t **)(grafico->lista_nodos->nodo_inicio->elemento);
+	printf("ESTO PASA.\n");
+	printf("Nodo primero: %s", primero->nombre_nodo);
 	//recorrer_lista(grafico->lista_nodos, mostrar_nodo);
 	ITERAR_LISTA_ENLAZADA(grafico->lista_nodos) {
-		nodo_t *nodo_red = (nodo_t *)(nodo_actual->elemento);
+		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
 		//printf("Nodo primero otra vez: %s", primero->nombre_nodo);
 		//printf("Nodo %s", nodo_red->nombre_nodo);
 		mostrar_nodo(nodo_red);
