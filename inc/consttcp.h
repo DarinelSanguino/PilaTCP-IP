@@ -1,0 +1,9 @@
+#ifndef _CONSTTCP_H_
+#define _CONSTTCP_H_
+
+#define SOLIC_BROAD_ARP 1
+#define RESPUESTA_ARP 2
+#define MENSAJE_ARP 806
+#define BROADCAST_MAC 0xFFFFFFFFFFFF
+
+#endif
