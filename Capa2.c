@@ -1,7 +1,29 @@
 #include "Capa2.h"
 
 void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq) {
-	return;
+	cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
+	if(recibir_trama_l2_en_interface(interface, cab_ethernet) == false) {
+		printf("Trama L2 rechazada.\n");
+		return;
+	}
+	printf("Trama L2 aceptada.\n");
+	switch(cab_ethernet->tipo) {
+		case MENSAJE_ARP:
+			cab_arp_t *cab_arp = (cab_arp_t *) cab_ethernet->payload;
+			switch(cab_arp->cod_op) {
+				case SOLIC_BROAD_ARP:
+					procesar_solicitud_broadcast_arp(nodo_rec, interface, cab_ethernet);
+					break;
+				case RESPUESTA_ARP:
+					procesar_mensaje_respuesta_arp(nodo_rec, interface, cab_ethernet);
+					break;
+				default:
+					break;
+			}
+		default:
+			mover_paq_a_capa3(nodo_rec, interface, paquete, tamano_paq);
+			break;
+	}
 }
 
 void inic_tabla_arp(tabla_arp_t **tabla_arp) {

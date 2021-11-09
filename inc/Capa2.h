@@ -72,8 +72,7 @@ static inline bool recibir_trama_l2_en_interface(interface_t *interface, cab_eth
 	if(IF_EN_MODO_L3(interface)) {
 		char *mac_destino = cab_ethernet->mac_destino.dir_mac;
 		//************************************MEMCMP*******************************
-		if(memcmp(mac, mac_destino, TAM_DIR_MAC) == 0 || ES_DIR_MAC_BROADCAST(mac_destino)) return true;
-		
+		if(memcmp(mac, mac_destino, TAM_DIR_MAC) == 0 || ES_DIR_MAC_BROADCAST(mac_destino)) return true;		
 	}
 	return false;
 }
