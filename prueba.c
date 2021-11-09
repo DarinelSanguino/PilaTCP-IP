@@ -17,8 +17,7 @@ int main(void) {
 	sleep(2);
 	nodo_t *nodo_trans = obtener_nodo_por_nombre(topo, "R0");
 	interface_t *interface_trans = obtener_intf_por_nombre(nodo_trans, "ethR0/0");
-	char *mensaje = "Este es un mensaje de prueba\0";
-	printf("Llegamos hasta aquí señores. Fue un honor.\n");
+	char *mensaje = "Este es un mensaje de prueba\0";	
 	enviar_paquete(mensaje, strlen(mensaje), interface_trans);
 
 	//mostrar_grafico(primera_topo);

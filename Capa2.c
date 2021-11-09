@@ -50,8 +50,10 @@ void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_
 }
 
 void mostrar_tabla_arp(tabla_arp_t *tabla_arp) {
+	printf("%s\n", __FUNCTION__);
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
 		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
+		printf("IP: %s\n", entrada_arp->dir_ip.dir_ip);
 		printf("IP: %s, MAC:%u%u%u%u%u%u, INTF: %s\n",
 			entrada_arp->dir_ip.dir_ip,
 			entrada_arp->dir_mac.dir_mac[0],

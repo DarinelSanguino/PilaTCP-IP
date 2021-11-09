@@ -88,9 +88,8 @@ void inicializar_grafico(grafico_t *grafico) {
 void mostrar_grafico(const grafico_t *grafico) {
 	/*****PENDIENTE:violación de segmento*****/
 	printf("%s\n", grafico->nombre_topologia);
-	nodo_t *primero = *(nodo_t **)(grafico->lista_nodos->nodo_inicio->elemento);
-	printf("ESTO PASA.\n");
-	printf("Nodo primero: %s", primero->nombre_nodo);
+	//nodo_t *primero = *(nodo_t **)(grafico->lista_nodos->nodo_inicio->elemento);	
+	//printf("Nodo primero: %s", primero->nombre_nodo);
 	//recorrer_lista(grafico->lista_nodos, mostrar_nodo);
 	ITERAR_LISTA_ENLAZADA(grafico->lista_nodos) {
 		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);

@@ -13,7 +13,7 @@ static int mostrar_manejador_topo_red(param_t *param, ser_buff_t *buf_tlv, op_mo
 	CODCMD = EXTRACT_CMD_CODE(buf_tlv);
 
 	tlv_struct_t *tlv = NULL;
-	char *nombre_nodo = NULL;	
+	char *nombre_nodo = NULL;
 
 	TLV_LOOP_BEGIN(buf_tlv, tlv) {
 		if(strncmp(tlv->leaf_id, "nombre_nodo", sizeof("nombre_nodo")) == 0) {
@@ -21,7 +21,7 @@ static int mostrar_manejador_topo_red(param_t *param, ser_buff_t *buf_tlv, op_mo
 		}
 	} TLV_LOOP_END;
 	switch(CODCMD) {
-		case CODCMD_MOSTRAR_TOPO_RED:		
+		case CODCMD_MOSTRAR_TOPO_RED:
 			mostrar_grafico(topo);
 			break;
 		case CODCMD_MOSTRAR_NODO:
@@ -71,13 +71,14 @@ static int manejador_mostrar_arp(param_t *param, ser_buff_t *buf_tlv, op_mode ha
 	char *nombre_nodo = NULL;	
 
 	TLV_LOOP_BEGIN(buf_tlv, tlv) {
-		if(strncmp(tlv->leaf_id, "nombre_nodo", sizeof("nombre_nodo")) == 0) {
+		if(strncmp(tlv->leaf_id, "nombre-nodo", sizeof("nombre-nodo")) == 0) {
 			nombre_nodo = tlv->value;
 		}
-	} TLV_LOOP_END;
+	} TLV_LOOP_END;	
 
-	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);
+	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);	
 	mostrar_tabla_arp(nodo->prop_nodo->tabla_arp);
+
 	return 0;
 }
 
@@ -145,7 +146,7 @@ void inic_cli_red() {
 		{
 			static param_t nombre_nodo;
 			//Validación de nombre pendiente
-			init_param(&nombre_nodo, LEAF, 0, 0, 0, STRING, "nombre_nodo", "Ayuda: nombre del nodo");
+			init_param(&nombre_nodo, LEAF, 0, 0, 0, STRING, "nombre-nodo", "Ayuda: nombre del nodo");
 			libcli_register_param(&nodo, &nombre_nodo);
 			{
 				static param_t resolver_arp;
@@ -153,7 +154,7 @@ void inic_cli_red() {
 				libcli_register_param(&nombre_nodo, &resolver_arp);
 				{
 					static param_t dir_ip;
-					init_param(&dir_ip, LEAF, 0, manejador_arp, 0, STRING, "dir_ip", "Ayuda: dirección IP");
+					init_param(&dir_ip, LEAF, 0, manejador_arp, 0, STRING, "dir-ip", "Ayuda: dirección IP");
 					libcli_register_param(&resolver_arp, &dir_ip);
 					set_param_cmd_code(&dir_ip, CODCMD_RESOLVER_ARP);
 				}
