@@ -37,6 +37,7 @@ void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete
 void inic_tabla_arp(tabla_arp_t **tabla_arp) {
 	*tabla_arp = malloc(sizeof(tabla_arp_t));
 	(*tabla_arp)->entradas_arp = malloc(sizeof(Lista_t));
+	(*tabla_arp)->entradas_arp->vacia = true;
 }
 
 entrada_arp_t * busqueda_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {

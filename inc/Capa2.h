@@ -124,6 +124,7 @@ static inline void procesar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *i
 			nodo->nombre_nodo, ip_destino, IP_IF(intf_entrada));
 		return;
 	}
+	actualizar_tabla_arp(TABLA_ARP_NODO(nodo), cab_arp, intf_entrada);
 	enviar_mensaje_arp_respuesta(cab_ethernet, intf_entrada);
 }
 
