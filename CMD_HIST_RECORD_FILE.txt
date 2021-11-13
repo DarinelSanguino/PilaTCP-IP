@@ -14,3 +14,15 @@ run nodo R0 resolver-arp 40.1.1.2
 run nodo R0 resolver-arp 40.1.1.2
 run nodo R0 resolver-arp 40.1.1.2
 run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+show nodo R0 arp
+show nodo R1 arp

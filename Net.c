@@ -46,14 +46,15 @@ void asignar_dir_mac(interface_t *interface) {
 }
 
 char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_total_buf) {
+	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
 	char *dir_fin_paq = paquete + tam_total_buf;
 	char *nueva_dir_paq = dir_fin_paq - tam_paq;
 	char temp[tam_paq];
 	memset(temp, 0, tam_paq);
-	strncpy(temp, paquete, tam_paq);
+	memcpy(temp, paquete, tam_paq);
 	printf("temp es %s\n", temp);
 	memset(paquete, 0, tam_total_buf);
-	strncpy(nueva_dir_paq, temp, tam_paq);
+	memcpy(nueva_dir_paq, temp, tam_paq);
 	printf("nueva_dir_paq es %s\n", nueva_dir_paq);
 	return nueva_dir_paq;
 }

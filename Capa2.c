@@ -22,6 +22,7 @@ void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete
 						procesar_mensaje_respuesta_arp(nodo_rec, interface, cab_ethernet);
 						break;
 					default:
+						printf("No se identificó a qué tipo de mensaje ARP pertenece.\n");
 						break;
 				}
 				break;

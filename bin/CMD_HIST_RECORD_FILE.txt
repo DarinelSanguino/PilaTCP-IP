@@ -1,2 +1,0 @@
-run nodo R0 resolver-arp 40.1.1.2
-show nodo R0 arp

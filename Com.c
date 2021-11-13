@@ -18,14 +18,18 @@ static void _recibir_paquete(nodo_t *nodo_rec, char *paquete_con_datos_aux, unsi
 		printf("Paquete recibido en interface desconocida %s del nodo %s\n.", nombre_if, nodo_rec->nombre_nodo);
 		return;
 	}
+	//Aquí ya no se incluye la información sobre la interface de destino.
 	recibir_paquete(nodo_rec, intf_destino, paquete_con_datos_aux + TAM_NOMBRE_IF, tamano_paq - TAM_NOMBRE_IF, nombre_if);
 }
 
 int recibir_paquete(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq, char *inicio) {
 	printf("El mensaje recibido es %s\n", paquete);
+	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
 	printf("El tamaño del paquete es %u bytes.\n", tamano_paq);
+	//MAX_TAMANO_BUFFER_PAQ - TAM_NOMBRE_IF es el espacio que queda disponible considerando el espacio que ocupa la información de la interface.
 	paquete = desp_der_buf_paq(paquete, tamano_paq, MAX_TAMANO_BUFFER_PAQ - TAM_NOMBRE_IF);
 	printf("El paquete después del desplazamiento es %s\n", paquete);
+	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
 	recibir_trama_capa2(nodo_rec, interface, paquete, tamano_paq);
 	return 0;
 }
@@ -143,6 +147,8 @@ int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_ori
 	strncpy(paquete_con_datos_aux, intf_destino->nombre_if, TAM_NOMBRE_IF);
 	paquete_con_datos_aux[TAM_NOMBRE_IF] = '\0';
 	memcpy(paquete_con_datos_aux + TAM_NOMBRE_IF, paquete, tamano_paq);
+	//Aquí se hace la primera verificación
+	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
 	rc = _enviar_paquete(sock, paquete_con_datos_aux, tamano_paq + TAM_NOMBRE_IF, puerto_udp_destino);
 	close(sock);
 	return rc;
