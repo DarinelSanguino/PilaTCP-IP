@@ -57,12 +57,14 @@ bool asignar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if, char *dir_ip, char 
 bool quitar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if);
 void asignar_dir_mac(interface_t *interface);
 char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_total_buf);
+char* aplicar_mascara(char *dir_ip, char mascara);
 //void mostrar_prop_intf(const prop_intf_t *prop_intf);
 //void mostrar_dir_ip(const dir_ip_t *dir_ip);
 //void mostrar_dir_mac(const dir_mac_t *dir_mac);
 
 #define MAC_IF(ptr_if) ptr_if->prop_intf->dir_mac.dir_mac
 #define IP_IF(ptr_if) ptr_if->prop_intf->dir_ip.dir_ip
+#define MASCARA_IF(ptr_if) ptr_if->prop_intf->mascara
 #define DIR_LO_NODO(ptr_nodo) ptr_nodo->prop_nodo->dir_loopback.dir_ip
 #define IF_EN_MODO_L3(ptr_if) ptr_if->prop_intf->tiene_dir_ip
 #define TABLA_ARP_NODO(ptr_nodo) ptr_nodo->prop_nodo->tabla_arp

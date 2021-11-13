@@ -134,17 +134,29 @@ void mostrar_prop_intf(const prop_intf_t *prop_intf) {
 void mostrar_dir_mac(const dir_mac_t *dir_mac) {
 	printf("Dirección MAC ");
 	for(int i = 0; i < TAM_DIR_MAC; i++) {
-		printf("%u-", dir_mac->dir_mac[i]);
+		printf("%hu-", dir_mac->dir_mac[i] & 0xFF);
 	}
 	printf("\n");
 }
 
 interface_t* obtener_intf_correspondiente_a_nodo(nodo_t *nodo, char *dir_ip) {
 	interface_t *interface_actual = NULL;
+	char *dir_ip_local;
+	char mascara;
+	char *subred_dir_ip_local;
+	char *subred_dir_ip;
 	for (int i = 0; i < MAX_INTF_POR_NODO; ++i) {
+		printf("i: %i.\n", i);
 		interface_actual = nodo->intf[i];
-		if(!interface_actual) return NULL;
-		if(strncmp(interface_actual->prop_intf->dir_ip.dir_ip, dir_ip, TAM_DIR_IP) == 0) return interface_actual;	
+		if(!interface_actual) return NULL;		
+		dir_ip_local = IP_IF(interface_actual);
+		mascara = MASCARA_IF(interface_actual);
+		subred_dir_ip_local = aplicar_mascara(dir_ip_local, mascara);
+		subred_dir_ip = aplicar_mascara(dir_ip, mascara);
+		if(strncmp(subred_dir_ip, subred_dir_ip_local, TAM_DIR_IP) == 0) {
+			printf("Se encontró la subred.\n");
+			return interface_actual;
+		}
 	}
 	return NULL;
 }

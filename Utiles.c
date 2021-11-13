@@ -1,7 +1,7 @@
 #include "Utiles.h"
 
-void capa2_llenar_con_mac_broadcast(char *arreglo_mac) {
-	char dir_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+void capa2_llenar_con_mac_broadcast(unsigned char *arreglo_mac) {
+	unsigned char dir_mac[TAM_DIR_MAC] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 	memcpy(arreglo_mac, dir_mac, TAM_DIR_MAC);
 }
 

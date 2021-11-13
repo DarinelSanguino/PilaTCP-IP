@@ -55,7 +55,7 @@ typedef struct dir_ip_ {
 } dir_ip_t;
 
 typedef struct dir_mac_ {
-	char dir_mac[TAM_DIR_MAC];
+	unsigned char dir_mac[TAM_DIR_MAC];
 } dir_mac_t;
 
 #pragma pack (pop)

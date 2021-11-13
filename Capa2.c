@@ -1,4 +1,7 @@
 #include "Capa2.h"
+void mover_paq_a_capa3(nodo_t *nodo_rec, interface_t *interface, char *paquete, size_t tamano_paq) {
+	return;
+}
 
 void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq) {
 	cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
@@ -9,18 +12,22 @@ void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete
 	printf("Trama L2 aceptada.\n");
 	switch(cab_ethernet->tipo) {
 		case MENSAJE_ARP:
-			cab_arp_t *cab_arp = (cab_arp_t *) cab_ethernet->payload;
-			switch(cab_arp->cod_op) {
-				case SOLIC_BROAD_ARP:
-					procesar_solicitud_broadcast_arp(nodo_rec, interface, cab_ethernet);
-					break;
-				case RESPUESTA_ARP:
-					procesar_mensaje_respuesta_arp(nodo_rec, interface, cab_ethernet);
-					break;
-				default:
-					break;
+			{
+				cab_arp_t *cab_arp = (cab_arp_t *) cab_ethernet->payload;
+				switch(cab_arp->cod_op) {
+					case SOLIC_BROAD_ARP:
+						procesar_solicitud_broadcast_arp(nodo_rec, interface, cab_ethernet);
+						break;
+					case RESPUESTA_ARP:
+						procesar_mensaje_respuesta_arp(nodo_rec, interface, cab_ethernet);
+						break;
+					default:
+						break;
+				}
+				break;
 			}
 		default:
+			printf("No se identificó como mensaje ARP.\n");
 			mover_paq_a_capa3(nodo_rec, interface, paquete, tamano_paq);
 			break;
 	}

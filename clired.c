@@ -46,10 +46,10 @@ static int manejador_arp(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_desh
 	char *dir_ip = NULL;
 
 	TLV_LOOP_BEGIN(buf_tlv, tlv) {
-		if(strncmp(tlv->leaf_id, "nombre_nodo", sizeof("nombre_nodo")) == 0) {
+		if(strncmp(tlv->leaf_id, "nombre-nodo", sizeof("nombre-nodo")) == 0) {
 			nombre_nodo = tlv->value;
 		}
-		if(strncmp(tlv->leaf_id, "dir_ip", sizeof("dir_ip")) == 0) {
+		if(strncmp(tlv->leaf_id, "dir-ip", sizeof("dir-ip")) == 0) {
 			dir_ip = tlv->value;
 		}
 	} TLV_LOOP_END;

@@ -58,6 +58,26 @@ char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_to
 	return nueva_dir_paq;
 }
 
+char* aplicar_mascara(char *dir_ip, char mascara) {
+	static char dir_ip_temp[TAM_DIR_IP];
+	uint32_t ip_temp = 0;
+	uint32_t mascara_temp = 0xFFFFFFFF;
+	mascara_temp = mascara_temp << (32 - mascara);
+	
+	inet_pton(AF_INET, dir_ip, &ip_temp);
+	ip_temp = htonl(ip_temp);
+	printf("ip_temp %u.\n", ip_temp);
+	
+	uint32_t ip = ip_temp & mascara_temp;
+	printf("ip %u.\n", ip);
+	ip = htonl(ip);
+	inet_ntop(AF_INET, &ip, dir_ip_temp, TAM_DIR_IP);
+	
+	
+	printf("Dir IP: %s. Mascara: %hu.\n", dir_ip_temp, mascara);
+	return dir_ip_temp;
+}
+
 /*void mostrar_prop_intf(const prop_intf_t *prop_intf) {
 	
 	printf("Dirección IP %s/%i\n", prop_intf->dir_ip.dir_ip, prop_intf->mascara);

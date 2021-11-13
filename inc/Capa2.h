@@ -52,6 +52,7 @@ struct tabla_arp_ {
 #define INTF_EN_MODO_L3(ptr_intf) ((ptr_intf)->prop_intf->tiene_dir_ip == true)
 
 extern int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_origen);
+void mover_paq_a_capa3(nodo_t *nodo_rec, interface_t *interface, char *paquete, size_t tamano_paq);
 
 void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq);
 void inic_tabla_arp(tabla_arp_t **tabla_arp);
@@ -68,11 +69,23 @@ static inline char* OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_t *cab_ethernet
 }
 
 static inline bool recibir_trama_l2_en_interface(interface_t *interface, cab_ethernet_t *cab_ethernet) {
-	char *mac = MAC_IF(interface);
+	unsigned char *mac = MAC_IF(interface);
 	if(IF_EN_MODO_L3(interface)) {
-		char *mac_destino = cab_ethernet->mac_destino.dir_mac;
-		//************************************MEMCMP*******************************
-		if(memcmp(mac, mac_destino, TAM_DIR_MAC) == 0 || ES_DIR_MAC_BROADCAST(mac_destino)) return true;		
+		unsigned char *mac_destino = cab_ethernet->mac_destino.dir_mac;
+		mostrar_dir_mac(&interface->prop_intf->dir_mac);
+		mostrar_dir_mac(&cab_ethernet->mac_destino);
+		//bool bandera_prueba = true;
+		//bandera_prueba = mac_destino[0] == 0xFF;
+
+		/*if(mac_destino[0] == 0xFF && mac_destino[1] == 0xFF && mac_destino[2] == 0xFF && mac_destino[3] == 0xFF && mac_destino[4] == 0xFF && mac_destino[5] == 0xFF) {
+			printf("Esto está pasando.\n");
+		}
+		printf("AABBNINKD.\n");
+		if(mac_destino[0] == 0xFF) {
+			printf("Esto sí pasa.\n");
+		}*/
+		if(memcmp(mac, mac_destino, TAM_DIR_MAC) == 0 || ES_DIR_MAC_BROADCAST(mac_destino)) return true;
+
 	}
 	return false;
 }
