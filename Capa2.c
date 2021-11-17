@@ -1,4 +1,15 @@
 #include "Capa2.h"
+
+void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_intf) {
+	interface_t *interface = obtener_intf_por_nombre(nodo, nombre_if);
+	if(!interface) {
+		printf("Error: no se encontró la interface %s.\n", nombre_if);
+		return;
+	}
+	/*****PENDIENTE: considerar los estados en los que se puede encontrar la interface.******/
+	interface->prop_intf->modo_l2_intf = modo_l2_intf;
+}
+
 void mover_paq_a_capa3(nodo_t *nodo_rec, interface_t *interface, char *paquete, size_t tamano_paq) {
 	return;
 }

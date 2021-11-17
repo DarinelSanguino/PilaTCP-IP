@@ -51,6 +51,8 @@ struct tabla_arp_ {
 #define FCS_ETH(ptr_cab_eth, tam_payload) (*(unsigned int *) (((char *) (((cab_ethernet_t *) ptr_cab_eth)->payload)) + tam_payload))
 #define INTF_EN_MODO_L3(ptr_intf) ((ptr_intf)->prop_intf->tiene_dir_ip == true)
 
+void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_intf);
+
 extern int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_origen);
 void mover_paq_a_capa3(nodo_t *nodo_rec, interface_t *interface, char *paquete, size_t tamano_paq);
 

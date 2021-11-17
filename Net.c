@@ -15,7 +15,7 @@ static unsigned int obtener_cod_hash(void *ptr, unsigned int tamano) {
 
 static inline char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf) {
 	switch(modo_l2_intf) {
-		case ACCESSO:
+		case ACCESO:
 			return "acceso";
 		case TRONCAL:
 			return "troncal";

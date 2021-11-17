@@ -113,7 +113,7 @@ void mostrar_nodo(const nodo_t *nodo) {
 }
 
 void mostrar_interface(const interface_t *interface) {
-	printf("Interface %s: ", interface->nombre_if);
+	printf("Interface %s: \n", interface->nombre_if);
 	//printf("dirección IP %s/%i ", interface->prop_intf->dir_ip.dir_ip, interface->prop_intf->mascara);
 	//printf("dirección MAC %s\n", interface->prop_intf->dir_mac.dir_mac);
 	//mostrar_dir_mac(interface->prop_intf->dir_mac);
