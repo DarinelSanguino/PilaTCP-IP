@@ -31,3 +31,28 @@ run nodo R0 resolver-arp 40.1.1.2
 run nodo R0 resolver-arp 40.1.1.2
 show nodo R0 arp
 show nodo R1 arp
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+show nodo R0 arp
+show nodo R1 arp
+run nodo R0 resolver-arp 40.1.1.2
+show nodo R1 arp
+show nodo R0 arp
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 20.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 20.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 40.1.1.2
+run nodo R0 resolver-arp 20.1.1.2
+show nodo R0 arp
+show nodo R1 arp
+show nodo R2 arp
+run nodo R2 resolver-arp 30.1.1.1
+show nodo R2 arp

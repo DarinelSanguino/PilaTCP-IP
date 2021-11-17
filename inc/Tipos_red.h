@@ -60,6 +60,12 @@ typedef struct dir_mac_ {
 
 #pragma pack (pop)
 
+typedef enum {
+	ACCESO,
+	TRONCAL,
+	MODO_L2_DESCONOCIDO
+} modo_l2_intf_t;
+
 struct prop_nodo_ {
 	bool tiene_dir_loopback;
 	dir_ip_t dir_loopback;
@@ -67,10 +73,14 @@ struct prop_nodo_ {
 };
 
 struct prop_intf_ {
-	bool tiene_dir_ip;
-	dir_ip_t dir_ip;
+	//Propiedades Capa 2
 	dir_mac_t dir_mac;
+	modo_l2_intf_t modo_l2_intf;
+	//Propiedades Capa 3
+	bool tiene_dir_ip;
+	dir_ip_t dir_ip;	
 	char mascara;
+	
 };
 
 #endif

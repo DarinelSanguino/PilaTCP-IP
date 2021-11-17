@@ -13,6 +13,17 @@ static unsigned int obtener_cod_hash(void *ptr, unsigned int tamano) {
 	return valor;
 }
 
+static inline char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf) {
+	switch(modo_l2_intf) {
+		case ACCESSO:
+			return "acceso";
+		case TRONCAL:
+			return "troncal";
+		default:
+			return "desconocido";
+	}
+}
+
 bool asignar_dir_loopback_nodo(nodo_t *nodo, char *dir_loopback) {
 	assert(dir_loopback);
 	strncpy(nodo->prop_nodo->dir_loopback.dir_ip, dir_loopback, 16);
@@ -59,8 +70,7 @@ char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_to
 	return nueva_dir_paq;
 }
 
-char* aplicar_mascara(char *dir_ip, char mascara) {
-	static char dir_ip_temp[TAM_DIR_IP];
+void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred) {
 	uint32_t ip_temp = 0;
 	uint32_t mascara_temp = 0xFFFFFFFF;
 	mascara_temp = mascara_temp << (32 - mascara);
@@ -72,11 +82,10 @@ char* aplicar_mascara(char *dir_ip, char mascara) {
 	uint32_t ip = ip_temp & mascara_temp;
 	printf("ip %u.\n", ip);
 	ip = htonl(ip);
-	inet_ntop(AF_INET, &ip, dir_ip_temp, TAM_DIR_IP);
+	inet_ntop(AF_INET, &ip, dir_ip_subred, TAM_DIR_IP);
+	dir_ip_subred[TAM_DIR_IP - 1] = '\0';
 	
-	
-	printf("Dir IP: %s. Mascara: %hu.\n", dir_ip_temp, mascara);
-	return dir_ip_temp;
+	printf("Dir IP: %s. Mascara: %hu.\n", dir_ip_subred, mascara);
 }
 
 /*void mostrar_prop_intf(const prop_intf_t *prop_intf) {

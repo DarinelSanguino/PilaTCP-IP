@@ -46,10 +46,12 @@ static inline void init_prop_nodo(prop_nodo_t *prop_nodo) {
 }
 
 static inline void init_prop_intf(prop_intf_t *prop_intf) {
+	memset(prop_intf->dir_mac.dir_mac, 0, 6);
+	prop_intf->modo_l2_intf = MODO_L2_DESCONOCIDO;
 	prop_intf->tiene_dir_ip = false;
 	prop_intf->mascara = 0;
 	memset(prop_intf->dir_ip.dir_ip, 0, 16);
-	memset(prop_intf->dir_mac.dir_mac, 0, 6);
+	
 }
 
 bool asignar_dir_loopback_nodo(nodo_t *nodo, char *dir_loopback);
@@ -57,7 +59,7 @@ bool asignar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if, char *dir_ip, char 
 bool quitar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if);
 void asignar_dir_mac(interface_t *interface);
 char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_total_buf);
-char* aplicar_mascara(char *dir_ip, char mascara);
+void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred);
 //void mostrar_prop_intf(const prop_intf_t *prop_intf);
 //void mostrar_dir_ip(const dir_ip_t *dir_ip);
 //void mostrar_dir_mac(const dir_mac_t *dir_mac);

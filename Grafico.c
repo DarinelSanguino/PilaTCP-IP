@@ -143,16 +143,16 @@ interface_t* obtener_intf_correspondiente_a_nodo(nodo_t *nodo, char *dir_ip) {
 	interface_t *interface_actual = NULL;
 	char *dir_ip_local;
 	char mascara;
-	char *subred_dir_ip_local;
-	char *subred_dir_ip;
-	for (int i = 0; i < MAX_INTF_POR_NODO; ++i) {
+	char subred_dir_ip_local[TAM_DIR_IP];
+	char subred_dir_ip[TAM_DIR_IP];
+	for(int i = 0; i < MAX_INTF_POR_NODO; ++i) {
 		printf("i: %i.\n", i);
 		interface_actual = nodo->intf[i];
 		if(!interface_actual) return NULL;		
 		dir_ip_local = IP_IF(interface_actual);
 		mascara = MASCARA_IF(interface_actual);
-		subred_dir_ip_local = aplicar_mascara(dir_ip_local, mascara);
-		subred_dir_ip = aplicar_mascara(dir_ip, mascara);
+		aplicar_mascara(dir_ip_local, mascara, subred_dir_ip_local);
+		aplicar_mascara(dir_ip, mascara, subred_dir_ip);
 		if(strncmp(subred_dir_ip, subred_dir_ip_local, TAM_DIR_IP) == 0) {
 			printf("Se encontró la subred.\n");
 			return interface_actual;

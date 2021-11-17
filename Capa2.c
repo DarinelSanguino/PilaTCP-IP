@@ -75,7 +75,7 @@ void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_
 	inet_ntop(AF_INET, &dir_ip, dir_ip_arp, TAM_DIR_IP);
 	dir_ip_arp[TAM_DIR_IP - 1] = '\0';
 	memcpy(entrada_arp->dir_ip.dir_ip, dir_ip_arp, TAM_DIR_IP);
-	memcpy(entrada_arp->dir_mac.dir_mac, cab_arp->mac_origen.dir_mac, TAM_DIR_MAC);
+	memcpy(entrada_arp->dir_mac.dir_mac, cab_arp->mac_origen.dir_mac, TAM_DIR_MAC);	
 	strncpy(entrada_arp->nombre_if, interface_entrada->nombre_if, TAM_NOMBRE_IF);
 	agregar_entrada_tabla_arp(tabla_arp, entrada_arp);
 }
@@ -85,7 +85,7 @@ void mostrar_tabla_arp(tabla_arp_t *tabla_arp) {
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
 		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
 		printf("IP: %s\n", entrada_arp->dir_ip.dir_ip);
-		printf("IP: %s, MAC:%u%u%u%u%u%u, INTF: %s\n",
+		printf("IP: %s, MAC:%u-%u-%u-%u-%u-%u, INTF: %s\n",
 			entrada_arp->dir_ip.dir_ip,
 			entrada_arp->dir_mac.dir_mac[0],
 			entrada_arp->dir_mac.dir_mac[1],
@@ -101,6 +101,9 @@ void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char
 	unsigned int tamano_payload = sizeof(cab_arp_t);
 	cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) calloc(1, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload);
 	if(!intf_salida) {
+		if(strncmp(dir_ip, "20.1.1.2", 8) == 0) {
+			printf("Detener aquí.\n");
+		}
 		intf_salida = obtener_intf_correspondiente_a_nodo(nodo, dir_ip);
 		if(!intf_salida) {
 			printf("Error: %s: ninguna subred apropiada para la resolución ARP de la dirección ip %s\n", nodo->nombre_nodo, dir_ip);
@@ -118,11 +121,11 @@ void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char
 	cab_arp->lon_dir_hw = sizeof(dir_mac_t);
 	cab_arp->lon_dir_proto = 4;
 	cab_arp->cod_op = SOLIC_BROAD_ARP;
-	memcpy(cab_ethernet->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));
+	memcpy(cab_arp->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));
 
 	inet_pton(AF_INET, IP_IF(intf_salida), &cab_arp->ip_origen);
 	cab_arp->ip_origen = htonl(cab_arp->ip_origen);
-	memset(cab_arp->mac_destino.dir_mac, 0, sizeof(dir_mac_t));
+	capa2_llenar_con_mac_broadcast(cab_arp->mac_destino.dir_mac);
 
 	/*********PENDIENTE: ¿uint32_t?**********/
 	inet_pton(AF_INET, dir_ip, &cab_arp->ip_destino);

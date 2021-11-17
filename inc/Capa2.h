@@ -91,24 +91,26 @@ static inline bool recibir_trama_l2_en_interface(interface_t *interface, cab_eth
 }
 
 static inline void enviar_mensaje_arp_respuesta(cab_ethernet_t *cab_ethernet_entrada, interface_t *intf_salida) {
+	unsigned int tamano_payload = sizeof(cab_arp_t);
 	cab_arp_t *cab_arp_entrada = (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_entrada);
 	cab_ethernet_t *cab_ethernet_resp = calloc(1, sizeof(cab_ethernet_t));
 	memcpy(cab_ethernet_resp->mac_destino.dir_mac, cab_arp_entrada->mac_origen.dir_mac, TAM_DIR_MAC);
-	memcpy(cab_ethernet_resp->mac_origen.dir_mac, cab_arp_entrada->mac_destino.dir_mac, TAM_DIR_MAC);
+	memcpy(cab_ethernet_resp->mac_origen.dir_mac, MAC_IF(intf_salida), TAM_DIR_MAC);
 	cab_ethernet_resp->tipo = MENSAJE_ARP;
 	cab_arp_t *cab_arp_resp = (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_resp);
 	cab_arp_resp->tipo_hw = 1;
 	cab_arp_resp->tipo_proto = 0x0800;
 	cab_arp_resp->lon_dir_hw = sizeof(dir_mac_t);
 	cab_arp_resp->lon_dir_proto = 4;
-	cab_arp_resp->cod_op = RESPUESTA_ARP;	
-	memcpy(cab_arp_resp->mac_origen.dir_mac, cab_arp_entrada->mac_destino.dir_mac, TAM_DIR_MAC);
+	cab_arp_resp->cod_op = RESPUESTA_ARP;
+	memcpy(cab_arp_resp->mac_origen.dir_mac, MAC_IF(intf_salida), TAM_DIR_MAC);
 	/******PENDIENTE: IP*****/
 	cab_arp_resp->ip_origen = cab_arp_entrada->ip_destino;
 	memcpy(cab_arp_resp->mac_destino.dir_mac, cab_arp_entrada->mac_origen.dir_mac, TAM_DIR_MAC);
 	cab_arp_resp->ip_destino = cab_arp_entrada->ip_origen;
 	FCS_ETH(cab_ethernet_resp, sizeof(cab_arp_t)) = 0;
-
+	/******PENDIENTE: HACE FALTA ENVIAR LA RESPUESTA.******************/
+	enviar_paquete((char *) cab_ethernet_resp, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);
 }
 
 static inline void procesar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_entrada, cab_ethernet_t *cab_ethernet) {
