@@ -62,8 +62,7 @@ static int manejador_arp(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_desh
 	return 0;
 }
 
-static int manejador_mostrar_arp(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {
-	printf("Aquí\n");
+static int manejador_mostrar_arp(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {	
 	int CODCMD = -1;
 	CODCMD = EXTRACT_CMD_CODE(buf_tlv);
 
@@ -78,7 +77,24 @@ static int manejador_mostrar_arp(param_t *param, ser_buff_t *buf_tlv, op_mode ha
 
 	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);	
 	mostrar_tabla_arp(nodo->prop_nodo->tabla_arp);
+	return 0;
+}
 
+static int manejador_mostrar_mac(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {	
+	int CODCMD = -1;
+	CODCMD = EXTRACT_CMD_CODE(buf_tlv);
+
+	tlv_struct_t *tlv = NULL;
+	char *nombre_nodo = NULL;	
+
+	TLV_LOOP_BEGIN(buf_tlv, tlv) {
+		if(strncmp(tlv->leaf_id, "nombre-nodo", sizeof("nombre-nodo")) == 0) {
+			nombre_nodo = tlv->value;
+		}
+	} TLV_LOOP_END;	
+
+	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);	
+	mostrar_tabla_mac(nodo->prop_nodo->tabla_mac);
 	return 0;
 }
 
@@ -122,6 +138,12 @@ void inic_cli_red() {
 				init_param(&arp, CMD, "arp", manejador_mostrar_arp, 0, INVALID, 0, "Ayuda: mostrar tabla ARP");
 				libcli_register_param(&nombre_nodo, &arp);
 				set_param_cmd_code(&arp, CODCMD_MOSTRAR_ARP);
+			}
+			{
+				static param_t mac;
+				init_param(&mac, CMD, "mac", manejador_mostrar_mac, 0, INVALID, 0, "Ayuda: mostrar tabla MAC");
+				libcli_register_param(&nombre_nodo, &mac);
+				set_param_cmd_code(&mac, CODCMD_MOSTRAR_MAC);
 			}
 		}		
 	}

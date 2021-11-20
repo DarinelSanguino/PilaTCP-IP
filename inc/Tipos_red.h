@@ -70,6 +70,7 @@ struct prop_nodo_ {
 	bool tiene_dir_loopback;
 	dir_ip_t dir_loopback;
 	tabla_arp_t *tabla_arp;
+	tabla_mac_t *tabla_mac;
 };
 
 struct prop_intf_ {
@@ -79,8 +80,7 @@ struct prop_intf_ {
 	//Propiedades Capa 3
 	bool tiene_dir_ip;
 	dir_ip_t dir_ip;	
-	char mascara;
-	
+	char mascara;	
 };
 
 #endif

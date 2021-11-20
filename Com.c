@@ -197,3 +197,15 @@ void iniciar_hilo_receptor_de_red(grafico_t *topo) {
 
 	pthread_create(&hilo_receptor, &atrib, _iniciar_hilo_receptor_de_red, (void *)topo);
 }
+
+int enviar_paquete_interfaces_l2(nodo_t *nodo, interface_t *intf_entrada, char *paquete, unsigned int tamano_paq) {
+	interface_t *intf_actual = NULL;
+	for(int i = 0; i < MAX_INTF_POR_NODO; i++) {
+		intf_actual = nodo->intf[i];
+		if(!intf_actual) return 0;
+		if(intf_actual != intf_entrada) {
+			enviar_paquete(paquete, tamano_paq, intf_actual);
+		}
+	}
+	return 1;
+}

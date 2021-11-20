@@ -38,11 +38,13 @@ struct prop_intf_ {
 	char mascara;
 };*/
 extern void inic_tabla_arp(tabla_arp_t **tabla_arp);
+extern void inic_tabla_mac(tabla_mac_t **tabla_mac);
 
 static inline void init_prop_nodo(prop_nodo_t *prop_nodo) {
 	prop_nodo->tiene_dir_loopback = false;
 	memset(prop_nodo->dir_loopback.dir_ip, 0, 16);
 	inic_tabla_arp(&prop_nodo->tabla_arp);
+	inic_tabla_mac(&prop_nodo->tabla_mac);
 }
 
 static inline void init_prop_intf(prop_intf_t *prop_intf) {
@@ -69,6 +71,7 @@ void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred);
 #define MASCARA_IF(ptr_if) ptr_if->prop_intf->mascara
 #define DIR_LO_NODO(ptr_nodo) ptr_nodo->prop_nodo->dir_loopback.dir_ip
 #define IF_EN_MODO_L3(ptr_if) ptr_if->prop_intf->tiene_dir_ip
+#define MODO_L2_IF(ptr_if) ptr_if->modo_l2_intf
 #define TABLA_ARP_NODO(ptr_nodo) ptr_nodo->prop_nodo->tabla_arp
 
 #endif

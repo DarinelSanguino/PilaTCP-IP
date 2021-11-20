@@ -21,28 +21,34 @@ void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete
 		return;
 	}
 	printf("Trama L2 aceptada.\n");
-	switch(cab_ethernet->tipo) {
-		case MENSAJE_ARP:
-			{
-				cab_arp_t *cab_arp = (cab_arp_t *) cab_ethernet->payload;
-				switch(cab_arp->cod_op) {
-					case SOLIC_BROAD_ARP:
-						procesar_solicitud_broadcast_arp(nodo_rec, interface, cab_ethernet);
-						break;
-					case RESPUESTA_ARP:
-						procesar_mensaje_respuesta_arp(nodo_rec, interface, cab_ethernet);
-						break;
-					default:
-						printf("No se identificó a qué tipo de mensaje ARP pertenece.\n");
-						break;
+
+	if(IF_EN_MODO_L3(interface)) {
+		switch(cab_ethernet->tipo) {
+			case MENSAJE_ARP:
+				{
+					cab_arp_t *cab_arp = (cab_arp_t *) cab_ethernet->payload;
+					switch(cab_arp->cod_op) {
+						case SOLIC_BROAD_ARP:
+							procesar_solicitud_broadcast_arp(nodo_rec, interface, cab_ethernet);
+							break;
+						case RESPUESTA_ARP:
+							procesar_mensaje_respuesta_arp(nodo_rec, interface, cab_ethernet);
+							break;
+						default:
+							printf("No se identificó a qué tipo de mensaje ARP pertenece.\n");
+							break;
+					}
+					break;
 				}
+			default:
+				printf("No se identificó como mensaje ARP.\n");
+				mover_paq_a_capa3(nodo_rec, interface, paquete, tamano_paq);
 				break;
-			}
-		default:
-			printf("No se identificó como mensaje ARP.\n");
-			mover_paq_a_capa3(nodo_rec, interface, paquete, tamano_paq);
-			break;
+		}
 	}
+	else if(MODO_L2_INTF(interface) == ACCESO || MODO_L2_INTF(interface) == TRONCAL) {
+		recibir_trama_switch_capa2(interface, paquete, tamano_paq);
+	}	
 }
 
 void inic_tabla_arp(tabla_arp_t **tabla_arp) {
@@ -94,8 +100,7 @@ void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_
 void mostrar_tabla_arp(tabla_arp_t *tabla_arp) {
 	printf("%s\n", __FUNCTION__);
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
-		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
-		printf("IP: %s\n", entrada_arp->dir_ip.dir_ip);
+		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);		
 		printf("IP: %s, MAC:%u-%u-%u-%u-%u-%u, INTF: %s\n",
 			entrada_arp->dir_ip.dir_ip,
 			entrada_arp->dir_mac.dir_mac[0],
@@ -147,4 +152,51 @@ void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char
 	enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);
 	/******PENDIENTE: revisar las demás solicitudes de memoria******/
 	free(cab_ethernet);
+}
+
+void inic_tabla_mac(tabla_mac_t **tabla_mac) {
+	*tabla_mac = malloc(sizeof(tabla_mac_t));
+	(*tabla_mac)->entradas_mac = malloc(sizeof(Lista_t));
+	(*tabla_mac)->entradas_mac->vacia = true;
+}
+
+entrada_mac_t * busqueda_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac) {
+	ITERAR_LISTA_ENLAZADA(tabla_mac->entradas_mac) {
+		entrada_mac_t *entrada_mac = *(entrada_mac_t **)(nodo_actual->elemento);
+		if(!strncmp(entrada_mac->dir_mac.dir_mac, dir_mac, TAM_DIR_MAC)) {
+			return entrada_mac;
+		}
+	} FIN_ITERACION;
+	return NULL;
+}
+
+bool agregar_entrada_tabla_mac(tabla_mac_t *tabla_mac, entrada_mac_t *entrada_mac) {
+	entrada_mac_t *entrada_mac_antigua = busqueda_tabla_mac(tabla_mac, entrada_mac->dir_mac.dir_mac);
+	if(entrada_mac_antigua) {
+		eliminar_entrada_tabla_mac(tabla_mac, entrada_mac->dir_mac.dir_mac);
+	}
+	return insertar(tabla_mac->entradas_mac, &entrada_mac, sizeof(entrada_mac_t *));
+}
+
+void eliminar_entrada_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac) {
+	ITERAR_LISTA_ENLAZADA(tabla_mac->entradas_mac) {
+		entrada_mac_t *entrada_mac = *(entrada_mac_t **)(nodo_actual->elemento);
+		if(!strncmp(entrada_mac->dir_mac.dir_mac, dir_mac, TAM_DIR_MAC)) {
+			eliminar(tabla_mac->entradas_mac, nodo_actual);
+		}
+	} FIN_ITERACION;
+}
+
+void mostrar_tabla_mac(tabla_mac_t *tabla_mac) {	
+	ITERAR_LISTA_ENLAZADA(tabla_mac->entradas_mac) {
+		entrada_mac_t *entrada_mac = *(entrada_mac_t **)(nodo_actual->elemento);		
+		printf("MAC:%u-%u-%u-%u-%u-%u, INTF: %s\n",
+			entrada_mac->dir_mac.dir_mac[0],
+			entrada_mac->dir_mac.dir_mac[1],
+			entrada_mac->dir_mac.dir_mac[2],
+			entrada_mac->dir_mac.dir_mac[3],
+			entrada_mac->dir_mac.dir_mac[4],
+			entrada_mac->dir_mac.dir_mac[5],
+			entrada_mac->nombre_if);
+	} FIN_ITERACION;
 }

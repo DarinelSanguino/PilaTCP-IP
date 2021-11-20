@@ -46,6 +46,15 @@ struct tabla_arp_ {
 	Lista_t *entradas_arp;
 };
 
+struct entrada_mac_ {
+	dir_mac_t dir_mac;
+	char nombre_if[TAM_NOMBRE_IF];
+};
+
+struct tabla_mac_ {
+	Lista_t *entradas_mac;
+}
+
 #define TAM_CAB_ETH_EXC_PAYLOAD (sizeof(cab_ethernet_t) - sizeof(((cab_ethernet_t *)0)->payload))
 
 #define FCS_ETH(ptr_cab_eth, tam_payload) (*(unsigned int *) (((char *) (((cab_ethernet_t *) ptr_cab_eth)->payload)) + tam_payload))
@@ -57,38 +66,35 @@ extern int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *i
 void mover_paq_a_capa3(nodo_t *nodo_rec, interface_t *interface, char *paquete, size_t tamano_paq);
 
 void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq);
+
 void inic_tabla_arp(tabla_arp_t **tabla_arp);
 entrada_arp_t * busqueda_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip);
-
 bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_arp);
 void eliminar_entrada_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip);
 void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface);
 void mostrar_tabla_arp(tabla_arp_t *tabla_arp);
 void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char *dir_ip);
 
+void inic_tabla_mac(tabla_mac_t **tabla_mac);
+entrada_mac_t * busqueda_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac);
+bool agregar_entrada_tabla_mac(tabla_mac_t *tabla_mac, entrada_mac_t *entrada_mac);
+void eliminar_entrada_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac);
+
 static inline char* OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_t *cab_ethernet) {
 	return cab_ethernet->payload;
 }
 
 static inline bool recibir_trama_l2_en_interface(interface_t *interface, cab_ethernet_t *cab_ethernet) {
+	/***********PENDIENTE: verificar si el nombre es adecuado.*************/
 	unsigned char *mac = MAC_IF(interface);
 	if(IF_EN_MODO_L3(interface)) {
 		unsigned char *mac_destino = cab_ethernet->mac_destino.dir_mac;
 		mostrar_dir_mac(&interface->prop_intf->dir_mac);
 		mostrar_dir_mac(&cab_ethernet->mac_destino);
-		//bool bandera_prueba = true;
-		//bandera_prueba = mac_destino[0] == 0xFF;
 
-		/*if(mac_destino[0] == 0xFF && mac_destino[1] == 0xFF && mac_destino[2] == 0xFF && mac_destino[3] == 0xFF && mac_destino[4] == 0xFF && mac_destino[5] == 0xFF) {
-			printf("Esto está pasando.\n");
-		}
-		printf("AABBNINKD.\n");
-		if(mac_destino[0] == 0xFF) {
-			printf("Esto sí pasa.\n");
-		}*/
 		if(memcmp(mac, mac_destino, TAM_DIR_MAC) == 0 || ES_DIR_MAC_BROADCAST(mac_destino)) return true;
-
 	}
+	if(MODO_L2_IF(interface) != MODO_L2_DESCONOCIDO) return true;
 	return false;
 }
 
