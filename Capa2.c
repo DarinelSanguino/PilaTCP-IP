@@ -1,5 +1,7 @@
 #include "Capa2.h"
 
+extern void recibir_trama_switch_capa2(interface_t *interface, char *paquete, unsigned int tamano_paq);
+
 void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_intf) {
 	interface_t *interface = obtener_intf_por_nombre(nodo, nombre_if);
 	if(!interface) {
@@ -46,7 +48,7 @@ void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete
 				break;
 		}
 	}
-	else if(MODO_L2_INTF(interface) == ACCESO || MODO_L2_INTF(interface) == TRONCAL) {
+	else if(MODO_L2_IF(interface) == ACCESO || MODO_L2_IF(interface) == TRONCAL) {
 		recibir_trama_switch_capa2(interface, paquete, tamano_paq);
 	}	
 }
@@ -60,7 +62,7 @@ void inic_tabla_arp(tabla_arp_t **tabla_arp) {
 entrada_arp_t * busqueda_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
 		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
-		if(!strncmp(entrada_arp->dir_ip.dir_ip, dir_ip, TAM_DIR_IP)) {
+		if(strncmp(entrada_arp->dir_ip.dir_ip, dir_ip, TAM_DIR_IP) == 0) {
 			return entrada_arp;
 		}
 	} FIN_ITERACION;
@@ -78,8 +80,9 @@ bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_ar
 void eliminar_entrada_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
 		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
-		if(!strncmp(entrada_arp->dir_ip.dir_ip, dir_ip, TAM_DIR_IP)) {
+		if(strncmp(entrada_arp->dir_ip.dir_ip, dir_ip, TAM_DIR_IP) == 0) {
 			eliminar(tabla_arp->entradas_arp, nodo_actual);
+			break;
 		}
 	} FIN_ITERACION;
 }
@@ -116,10 +119,7 @@ void mostrar_tabla_arp(tabla_arp_t *tabla_arp) {
 void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char *dir_ip) {
 	unsigned int tamano_payload = sizeof(cab_arp_t);
 	cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) calloc(1, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload);
-	if(!intf_salida) {
-		if(strncmp(dir_ip, "20.1.1.2", 8) == 0) {
-			printf("Detener aquí.\n");
-		}
+	if(!intf_salida) {		
 		intf_salida = obtener_intf_correspondiente_a_nodo(nodo, dir_ip);
 		if(!intf_salida) {
 			printf("Error: %s: ninguna subred apropiada para la resolución ARP de la dirección ip %s\n", nodo->nombre_nodo, dir_ip);
@@ -160,10 +160,10 @@ void inic_tabla_mac(tabla_mac_t **tabla_mac) {
 	(*tabla_mac)->entradas_mac->vacia = true;
 }
 
-entrada_mac_t * busqueda_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac) {
+entrada_mac_t * busqueda_tabla_mac(tabla_mac_t *tabla_mac, unsigned char *dir_mac) {
 	ITERAR_LISTA_ENLAZADA(tabla_mac->entradas_mac) {
 		entrada_mac_t *entrada_mac = *(entrada_mac_t **)(nodo_actual->elemento);
-		if(!strncmp(entrada_mac->dir_mac.dir_mac, dir_mac, TAM_DIR_MAC)) {
+		if(memcmp(entrada_mac->dir_mac.dir_mac, dir_mac, TAM_DIR_MAC) == 0) {
 			return entrada_mac;
 		}
 	} FIN_ITERACION;
@@ -178,11 +178,13 @@ bool agregar_entrada_tabla_mac(tabla_mac_t *tabla_mac, entrada_mac_t *entrada_ma
 	return insertar(tabla_mac->entradas_mac, &entrada_mac, sizeof(entrada_mac_t *));
 }
 
-void eliminar_entrada_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac) {
+void eliminar_entrada_tabla_mac(tabla_mac_t *tabla_mac, unsigned char *dir_mac) {
 	ITERAR_LISTA_ENLAZADA(tabla_mac->entradas_mac) {
 		entrada_mac_t *entrada_mac = *(entrada_mac_t **)(nodo_actual->elemento);
-		if(!strncmp(entrada_mac->dir_mac.dir_mac, dir_mac, TAM_DIR_MAC)) {
+		if(memcmp(entrada_mac->dir_mac.dir_mac, dir_mac, TAM_DIR_MAC) == 0) {
+			printf("Antes de eliminar la entrada.\n");
 			eliminar(tabla_mac->entradas_mac, nodo_actual);
+			break;
 		}
 	} FIN_ITERACION;
 }

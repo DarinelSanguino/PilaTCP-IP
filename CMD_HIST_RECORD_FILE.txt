@@ -56,3 +56,103 @@ show nodo R1 arp
 show nodo R2 arp
 run nodo R2 resolver-arp 30.1.1.1
 show nodo R2 arp
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+show nodo H0 arp
+show nodo SWC2 arp
+show nodo SWC2 mac
+show nodo H0 arp
+show nodo H1 arp
+show nodo H0 arp
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+show nodo H0 arp
+show nodo H1 arp
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+show nodo H0 arp
+show nodo H1 arp
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+run nodo H1 resolver-arp 10.1.1.3
+show nodo SWC2 mac
+show nodo H1 arp
+show nodo H0 arp
+show nodo H2 arp
+show nodo SWC2 mac
+run nodo H0 resolver-arp 10.1.1.2
+show nodo H0 arp
+show nodo H1 arp
+show nodo SWC2 mac
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+show nodo H0 arp
+show nodo H1 arp
+show nodo H1 arp
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+show nodo SWC2 mac
+show nodo H0 arp
+show nodo H1 arp
+show nodo H2 arp
+show nodo SWC2 mac
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 10.1.1.3
+show nodo SWC2 mac
+run nodo H3 resolver-arp 10.1.1.1
+show nodo SWC2 mac
+show nodo H0 arp
+show nodo H1 arp
+show nodo H2 arp
+show nodo H3 arp
+run nodo H3 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+run nodo H3 resolver-arp 10.1.1.2
+show nodo SWC2 mac
+run nodo H2 resolver-arp 10.1.1.1
+show nodo SWC2 mac
+show nodo H0 arp
+show nodo H2 arp

@@ -20,5 +20,6 @@ int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_ori
 int recibir_paquete(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq, char *inicio);
 void inic_sock_udp(nodo_t *nodo);
 void iniciar_hilo_receptor_de_red(grafico_t *topo);
+int enviar_paquete_interfaces_l2(nodo_t *nodo, interface_t *intf_entrada, char *paquete, unsigned int tamano_paq);
 
 #endif

@@ -53,7 +53,7 @@ struct entrada_mac_ {
 
 struct tabla_mac_ {
 	Lista_t *entradas_mac;
-}
+};
 
 #define TAM_CAB_ETH_EXC_PAYLOAD (sizeof(cab_ethernet_t) - sizeof(((cab_ethernet_t *)0)->payload))
 
@@ -76,9 +76,10 @@ void mostrar_tabla_arp(tabla_arp_t *tabla_arp);
 void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char *dir_ip);
 
 void inic_tabla_mac(tabla_mac_t **tabla_mac);
-entrada_mac_t * busqueda_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac);
+entrada_mac_t * busqueda_tabla_mac(tabla_mac_t *tabla_mac, unsigned char *dir_mac);
 bool agregar_entrada_tabla_mac(tabla_mac_t *tabla_mac, entrada_mac_t *entrada_mac);
-void eliminar_entrada_tabla_mac(tabla_mac_t *tabla_mac, char *dir_mac);
+void eliminar_entrada_tabla_mac(tabla_mac_t *tabla_mac, unsigned char *dir_mac);
+void mostrar_tabla_mac(tabla_mac_t *tabla_mac);
 
 static inline char* OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_t *cab_ethernet) {
 	return cab_ethernet->payload;
@@ -119,9 +120,13 @@ static inline void enviar_mensaje_arp_respuesta(cab_ethernet_t *cab_ethernet_ent
 	FCS_ETH(cab_ethernet_resp, sizeof(cab_arp_t)) = 0;
 	/******PENDIENTE: HACE FALTA ENVIAR LA RESPUESTA.******************/
 	enviar_paquete((char *) cab_ethernet_resp, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);
+	free(cab_ethernet_resp);
 }
 
 static inline void procesar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_entrada, cab_ethernet_t *cab_ethernet) {
+	if(strncmp(intf_entrada->prop_intf->dir_ip.dir_ip, "10.1.1.3", 8) == 0) {
+		printf("Aquí está el error.\n");
+	}
 	printf("%s: mensaje broadcast ARP recibido en la interface %s del nodo %s", __FUNCTION__, intf_entrada->nombre_if, nodo->nombre_nodo);
 	/********PENDIENTE: corregir****************/
 	cab_arp_t *cab_arp = (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet);

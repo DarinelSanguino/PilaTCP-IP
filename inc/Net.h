@@ -71,7 +71,7 @@ void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred);
 #define MASCARA_IF(ptr_if) ptr_if->prop_intf->mascara
 #define DIR_LO_NODO(ptr_nodo) ptr_nodo->prop_nodo->dir_loopback.dir_ip
 #define IF_EN_MODO_L3(ptr_if) ptr_if->prop_intf->tiene_dir_ip
-#define MODO_L2_IF(ptr_if) ptr_if->modo_l2_intf
+#define MODO_L2_IF(ptr_if) ptr_if->prop_intf->modo_l2_intf
 #define TABLA_ARP_NODO(ptr_nodo) ptr_nodo->prop_nodo->tabla_arp
 
 #endif

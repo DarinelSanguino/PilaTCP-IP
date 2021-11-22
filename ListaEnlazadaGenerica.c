@@ -36,8 +36,11 @@ void eliminar(Lista_t *lista, NodoLista_t *nodo_lista) {
 	NodoLista_t *nodo_actual = lista->nodo_inicio;
 	while(nodo_actual != NULL) {
 		if(nodo_actual == nodo_lista) {
+			if(nodo_actual == lista->nodo_final) {
+				lista->nodo_final = nodo_previo;
+			}
 			if(nodo_previo == NULL) {
-				lista->nodo_inicio = nodo_actual->sig_nodo;			
+				lista->nodo_inicio = nodo_actual->sig_nodo;
 			}
 			else {
 				nodo_previo->sig_nodo = nodo_actual->sig_nodo;
