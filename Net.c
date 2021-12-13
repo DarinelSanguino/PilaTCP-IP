@@ -13,7 +13,7 @@ static unsigned int obtener_cod_hash(void *ptr, unsigned int tamano) {
 	return valor;
 }
 
-static inline char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf) {
+char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf) {
 	switch(modo_l2_intf) {
 		case ACCESO:
 			return "acceso";
@@ -53,7 +53,6 @@ void asignar_dir_mac(interface_t *interface) {
 	//itoa(codigo_hash, cod_hash, 10);
 	memset(interface->prop_intf->dir_mac.dir_mac, 0, sizeof(interface->prop_intf->dir_mac.dir_mac));
 	memcpy(interface->prop_intf->dir_mac.dir_mac, (char *)&codigo_hash, sizeof(unsigned int));
-
 }
 
 char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_total_buf) {

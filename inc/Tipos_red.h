@@ -6,6 +6,7 @@
 #define TAM_NOMBRE_NODO 16
 #define TAM_NOMBRE_IF 16
 #define MAX_INTF_POR_NODO 10
+#define MAX_VLANS_POR_INTF 10
 #define MAX_NODOS_POR_GRAFICO 256
 #define TAM_DIR_MAC 6
 
@@ -63,7 +64,7 @@ typedef struct dir_mac_ {
 typedef enum {
 	ACCESO,
 	TRONCAL,
-	MODO_L2_DESCONOCIDO
+	DESCONOCIDO
 } modo_l2_intf_t;
 
 struct prop_nodo_ {
@@ -77,6 +78,7 @@ struct prop_intf_ {
 	//Propiedades Capa 2
 	dir_mac_t dir_mac;
 	modo_l2_intf_t modo_l2_intf;
+	unsigned int vlans[MAX_VLANS_POR_INTF];
 	//Propiedades Capa 3
 	bool tiene_dir_ip;
 	dir_ip_t dir_ip;	

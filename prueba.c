@@ -8,13 +8,15 @@
 //extern void inic_cli_red();
 extern grafico_t *const_primera_topo();
 extern grafico_t *const_topologia_switch_capa2();
+extern grafico_t * const_topologia_doble_switch();
 grafico_t *topo = NULL;
 
 
 int main(void) {
 	inic_cli_red();
 	//grafico_t *primera_topo = const_primera_topo();
-	topo = const_topologia_switch_capa2();
+	//topo = const_topologia_switch_capa2();
+	topo = const_topologia_doble_switch();
 
 	sleep(2);
 	/*nodo_t *nodo_trans = obtener_nodo_por_nombre(topo, "R0");
@@ -22,7 +24,7 @@ int main(void) {
 	char *mensaje = "Este es un mensaje de prueba\0";	
 	enviar_paquete(mensaje, strlen(mensaje), interface_trans);*/
 
-	//mostrar_grafico(primera_topo);
+	mostrar_grafico(topo);
 	start_shell();
 	return 0;
 }

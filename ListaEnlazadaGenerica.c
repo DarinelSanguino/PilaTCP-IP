@@ -41,6 +41,7 @@ void eliminar(Lista_t *lista, NodoLista_t *nodo_lista) {
 			}
 			if(nodo_previo == NULL) {
 				lista->nodo_inicio = nodo_actual->sig_nodo;
+				lista->vacia = true;
 			}
 			else {
 				nodo_previo->sig_nodo = nodo_actual->sig_nodo;

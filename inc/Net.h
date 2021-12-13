@@ -42,20 +42,24 @@ extern void inic_tabla_mac(tabla_mac_t **tabla_mac);
 
 static inline void init_prop_nodo(prop_nodo_t *prop_nodo) {
 	prop_nodo->tiene_dir_loopback = false;
-	memset(prop_nodo->dir_loopback.dir_ip, 0, 16);
+	memset(prop_nodo->dir_loopback.dir_ip, 0, TAM_DIR_IP);
 	inic_tabla_arp(&prop_nodo->tabla_arp);
 	inic_tabla_mac(&prop_nodo->tabla_mac);
 }
 
 static inline void init_prop_intf(prop_intf_t *prop_intf) {
-	memset(prop_intf->dir_mac.dir_mac, 0, 6);
-	prop_intf->modo_l2_intf = MODO_L2_DESCONOCIDO;
+	memset(prop_intf->dir_mac.dir_mac, 0, TAM_DIR_MAC);
+	prop_intf->modo_l2_intf = DESCONOCIDO;
+	for(int i = 0; i < MAX_VLANS_POR_INTF; i++) {
+		prop_intf->vlans[i] = -1;
+	}
 	prop_intf->tiene_dir_ip = false;
 	prop_intf->mascara = 0;
-	memset(prop_intf->dir_ip.dir_ip, 0, 16);
+	memset(prop_intf->dir_ip.dir_ip, 0, TAM_DIR_IP);
 	
 }
 
+char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf);
 bool asignar_dir_loopback_nodo(nodo_t *nodo, char *dir_loopback);
 bool asignar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if, char *dir_ip, char mascara);
 bool quitar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if);
@@ -69,6 +73,8 @@ void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred);
 #define MAC_IF(ptr_if) ptr_if->prop_intf->dir_mac.dir_mac
 #define IP_IF(ptr_if) ptr_if->prop_intf->dir_ip.dir_ip
 #define MASCARA_IF(ptr_if) ptr_if->prop_intf->mascara
+#define VLANS_IF(ptr_if) ptr_if->prop_intf->vlans
+#define VLAN_IF(ptr_if, i) ptr_if->prop_intf->vlans[i]
 #define DIR_LO_NODO(ptr_nodo) ptr_nodo->prop_nodo->dir_loopback.dir_ip
 #define IF_EN_MODO_L3(ptr_if) ptr_if->prop_intf->tiene_dir_ip
 #define MODO_L2_IF(ptr_if) ptr_if->prop_intf->modo_l2_intf

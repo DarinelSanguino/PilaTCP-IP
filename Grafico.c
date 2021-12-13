@@ -1,6 +1,7 @@
 #include "Grafico.h"
 
 extern void inic_sock_udp(nodo_t *nodo);
+extern void mostrar_prop_vlan(modo_l2_intf_t modo_l2_intf, const unsigned int *vlans);
 
 grafico_t * crear_nuevo_grafico(const char *nombre_topologia) {
 	grafico_t *grafico = malloc(sizeof(grafico_t));
@@ -116,8 +117,10 @@ void mostrar_interface(const interface_t *interface) {
 	printf("Interface %s: \n", interface->nombre_if);
 	//printf("dirección IP %s/%i ", interface->prop_intf->dir_ip.dir_ip, interface->prop_intf->mascara);
 	//printf("dirección MAC %s\n", interface->prop_intf->dir_mac.dir_mac);
-	//mostrar_dir_mac(interface->prop_intf->dir_mac);
-	//mostrar_enlace(interface->enlace);
+	//mostrar_dir_mac(&interface->prop_intf->dir_mac);
+	mostrar_enlace(interface->enlace);
+	mostrar_prop_intf(interface->prop_intf);
+	
 }
 
 void mostrar_enlace(const enlace_t *enlace) {
@@ -129,6 +132,7 @@ void mostrar_prop_intf(const prop_intf_t *prop_intf) {
 	printf("Dirección IP %s/%i\n", prop_intf->dir_ip.dir_ip, prop_intf->mascara);
 	//printf("Dirección MAC %s\n", prop_intf->dir_mac.dir_mac);
 	mostrar_dir_mac(&prop_intf->dir_mac);
+	mostrar_prop_vlan(prop_intf->modo_l2_intf, prop_intf->vlans);
 }
 
 void mostrar_dir_mac(const dir_mac_t *dir_mac) {

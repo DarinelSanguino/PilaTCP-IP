@@ -23,6 +23,7 @@ static void _recibir_paquete(nodo_t *nodo_rec, char *paquete_con_datos_aux, unsi
 }
 
 int recibir_paquete(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq, char *inicio) {
+	/***********PENDIENTE: ver si inicio es necesaria**********/
 	printf("El mensaje recibido es %s\n", paquete);
 	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
 	printf("El tamaño del paquete es %u bytes.\n", tamano_paq);
@@ -198,7 +199,7 @@ void iniciar_hilo_receptor_de_red(grafico_t *topo) {
 	pthread_create(&hilo_receptor, &atrib, _iniciar_hilo_receptor_de_red, (void *)topo);
 }
 
-int enviar_paquete_interfaces_l2(nodo_t *nodo, interface_t *intf_entrada, char *paquete, unsigned int tamano_paq) {
+int enviar_paquete_interfaces_capa2(nodo_t *nodo, interface_t *intf_entrada, char *paquete, unsigned int tamano_paq) {
 	interface_t *intf_actual = NULL;
 	for(int i = 0; i < MAX_INTF_POR_NODO; i++) {
 		intf_actual = nodo->intf[i];
