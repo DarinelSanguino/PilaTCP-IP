@@ -50,8 +50,8 @@ obj/prueba.o: prueba.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h /usr/include/assert.h \
  inc/Grafico.h inc/ListaEnlazadaGenerica.h inc/Tipos_red.h \
- inc/Capa2_fwd.h inc/Net.h inc/Utiles.h /usr/include/arpa/inet.h \
- /usr/include/netinet/in.h \
+ inc/Capa2_fwd.h inc/Capa3_fwd.h inc/Net.h inc/Utiles.h \
+ /usr/include/arpa/inet.h /usr/include/netinet/in.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/sys/socket.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
@@ -93,4 +93,5 @@ obj/prueba.o: prueba.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/stdint.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
  inc/consttcp.h CommandParser/libcli.h CommandParser/libcliid.h \
  CommandParser/cmd_hier.h CommandParser/clistd.h CommandParser/cliconst.h \
- clired.c CommandParser/cmdtlv.h CommandParser/serialize.h codigoscmd.h
+ clired.c CommandParser/cmdtlv.h CommandParser/serialize.h codigoscmd.h \
+ inc/Capa3.h

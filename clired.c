@@ -2,6 +2,7 @@
 #include "CommandParser/cmdtlv.h"
 #include "codigoscmd.h"
 #include "Grafico.h"
+#include "Capa3.h"
 #include <stdio.h>
 
 extern grafico_t *topo;
@@ -76,7 +77,7 @@ static int manejador_mostrar_arp(param_t *param, ser_buff_t *buf_tlv, op_mode ha
 	} TLV_LOOP_END;	
 
 	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);	
-	mostrar_tabla_arp(nodo->prop_nodo->tabla_arp);
+	mostrar_tabla_arp(TABLA_ARP_NODO(nodo));
 	return 0;
 }
 
@@ -94,7 +95,25 @@ static int manejador_mostrar_mac(param_t *param, ser_buff_t *buf_tlv, op_mode ha
 	} TLV_LOOP_END;	
 
 	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);	
-	mostrar_tabla_mac(nodo->prop_nodo->tabla_mac);
+	mostrar_tabla_mac(TABLA_MAC_NODO(nodo));
+	return 0;
+}
+
+static int manejador_mostrar_tabla_ruteo(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {	
+	int CODCMD = -1;
+	CODCMD = EXTRACT_CMD_CODE(buf_tlv);
+
+	tlv_struct_t *tlv = NULL;
+	char *nombre_nodo = NULL;	
+
+	TLV_LOOP_BEGIN(buf_tlv, tlv) {
+		if(strncmp(tlv->leaf_id, "nombre-nodo", sizeof("nombre-nodo")) == 0) {
+			nombre_nodo = tlv->value;
+		}
+	} TLV_LOOP_END;
+
+	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);
+	mostrar_tabla_ruteo(TABLA_RUTEO_NODO(nodo));
 	return 0;
 }
 
@@ -103,6 +122,42 @@ static int manejador_mostrar_nodo(param_t *param, ser_buff_t *buf_tlv, op_mode h
 }
 
 static int validar_nombre_nodo(char *nombre_nodo) {
+	return 0;
+}
+
+static int manejador_agregar_ruta(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {	
+	int CODCMD = -1;
+	CODCMD = EXTRACT_CMD_CODE(buf_tlv);
+
+	tlv_struct_t *tlv = NULL;
+	char *nombre_nodo = NULL;
+	char *destino = NULL;
+	char *cadena_mascara = NULL;
+	char *ip_gw = NULL;
+	char *intf_salida = NULL;
+
+	TLV_LOOP_BEGIN(buf_tlv, tlv) {
+		if(strncmp(tlv->leaf_id, "nombre-nodo", sizeof("nombre-nodo")) == 0) {
+			nombre_nodo = tlv->value;
+		}
+		if(strncmp(tlv->leaf_id, "destino", sizeof("destino")) == 0) {
+			destino = tlv->value;
+		}
+		if(strncmp(tlv->leaf_id, "mascara", sizeof("mascara")) == 0) {
+			cadena_mascara = tlv->value;
+		}
+		if(strncmp(tlv->leaf_id, "ip-gw", sizeof("ip-gw")) == 0) {
+			ip_gw = tlv->value;
+		}
+		if(strncmp(tlv->leaf_id, "intf-salida", sizeof("intf-salida")) == 0) {
+			intf_salida = tlv->value;
+		}
+	} TLV_LOOP_END;
+
+	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);
+	char mascara = atoi(cadena_mascara);
+	mostrar_tabla_ruteo(TABLA_RUTEO_NODO(nodo));
+	tabla_ruteo_agregar_ruta_remota(TABLA_RUTEO_NODO(nodo), destino, mascara, ip_gw, intf_salida);
 	return 0;
 }
 
@@ -145,21 +200,53 @@ void inic_cli_red() {
 				libcli_register_param(&nombre_nodo, &mac);
 				set_param_cmd_code(&mac, CODCMD_MOSTRAR_MAC);
 			}
+			{
+				static param_t tabla_ruteo;
+				init_param(&tabla_ruteo, CMD, "tabla-ruteo", manejador_mostrar_tabla_ruteo, 0, INVALID, 0, "Ayuda: mostrar tabla de ruteo");
+				libcli_register_param(&nombre_nodo, &tabla_ruteo);
+				set_param_cmd_code(&tabla_ruteo, CODCMD_MOSTRAR_TABLA_RUTEO);
+			}
 		}		
 	}
 
-	/*{
+	{	
 		static param_t nodo;
-		init_param(&nodo, CMD, "nodo", 0, 0, INVALID, 0, "Arrojar nodo");
-		libcli_register_param(show, &nodo);
+		init_param(&nodo, CMD, "nodo", 0, 0, INVALID, 0, "Configurar propiedades del nodo");
+		libcli_register_param(config, &nodo);
 		{
 			static param_t nombre_nodo;
-			//Validación de nombre pendiente
-			init_param(&nombre_nodo, LEAF, 0, mostrar_manejador_topo_red, 0, STRING, "nombre_nodo", "Ayuda: nombre del nodo");
+			init_param(&nombre_nodo, LEAF, 0, 0, 0, STRING, "nombre-nodo", "Ayuda: nombre del nodo");
 			libcli_register_param(&nodo, &nombre_nodo);
-			set_param_cmd_code(&nombre_nodo, CODCMD_MOSTRAR_NODO);
-		}		
-	}*/
+			{
+				static param_t ruta;
+				init_param(&ruta, CMD, "ruta", 0, 0, INVALID, 0, "Agregar ruta remota");
+				libcli_register_param(&nombre_nodo, &ruta);
+				{
+					static param_t destino;
+					init_param(&destino, LEAF, 0, 0, 0, STRING, "destino", "Ayuda: IP de destino");
+					libcli_register_param(&ruta, &destino);
+					{
+						static param_t mascara;
+						init_param(&mascara, LEAF, 0, 0, 0, INT, "mascara", "Ayuda: mascara de IP");
+						libcli_register_param(&destino, &mascara);
+						{
+							static param_t ip_gw;
+							init_param(&ip_gw, LEAF, 0, 0, 0, STRING, "ip-gw", "Ayuda: direcion IP de gateway");
+							libcli_register_param(&mascara, &ip_gw);
+							{
+								static param_t intf_salida;
+								init_param(&intf_salida, LEAF, 0, manejador_agregar_ruta, 0, STRING, "intf-salida", "Ayuda: interface de salida");
+								libcli_register_param(&ip_gw, &intf_salida);
+								set_param_cmd_code(&intf_salida, CODCMD_AGREGAR_RUTA);
+							}
+						}
+					}
+
+				}
+			}
+		}
+		
+	}
 
 	{
 		static param_t nodo;

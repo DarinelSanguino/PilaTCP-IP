@@ -128,3 +128,28 @@ grafico_t * const_topologia_doble_switch() {
 
 	return grafico_doble_sw;
 }
+
+grafico_t * const_topologia_tres_nodos() {
+	grafico_t *grafico_tres_nodos = crear_nuevo_grafico("Grafico con 3 nodos");
+	nodo_t *nodo_H0 = crear_nodo_grafico(grafico_tres_nodos, "H0");	
+	nodo_t *nodo_H1 = crear_nodo_grafico(grafico_tres_nodos, "H1");
+	nodo_t *nodo_H2 = crear_nodo_grafico(grafico_tres_nodos, "H2");	
+
+	insertar_enlace_entre_nodos(nodo_H0, nodo_H1, "ethR0/0", "ethR1/0", 1);
+	insertar_enlace_entre_nodos(nodo_H1, nodo_H2, "ethR1/1", "ethR2/0", 1);
+
+	asignar_dir_loopback_nodo(nodo_H0, "122.1.1.1");
+	asignar_dir_ip_intf_nodo(nodo_H0, "ethR0/0", "10.1.1.1", 24);
+	
+	asignar_dir_loopback_nodo(nodo_H1, "122.1.1.2");
+	asignar_dir_ip_intf_nodo(nodo_H1, "ethR1/0", "10.1.1.2", 24);
+	asignar_dir_ip_intf_nodo(nodo_H1, "ethR1/1", "11.1.1.1", 24);
+
+	asignar_dir_loopback_nodo(nodo_H2, "122.1.1.3");
+	asignar_dir_ip_intf_nodo(nodo_H2, "ethR2/0", "11.1.1.2", 24);
+
+	iniciar_hilo_receptor_de_red(grafico_tres_nodos);
+
+	return grafico_tres_nodos;
+}
+

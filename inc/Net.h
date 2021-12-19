@@ -39,12 +39,14 @@ struct prop_intf_ {
 };*/
 extern void inic_tabla_arp(tabla_arp_t **tabla_arp);
 extern void inic_tabla_mac(tabla_mac_t **tabla_mac);
+extern void inic_tabla_ruteo(tabla_ruteo_t **tabla_ruteo);
 
 static inline void init_prop_nodo(prop_nodo_t *prop_nodo) {
 	prop_nodo->tiene_dir_loopback = false;
 	memset(prop_nodo->dir_loopback.dir_ip, 0, TAM_DIR_IP);
 	inic_tabla_arp(&prop_nodo->tabla_arp);
 	inic_tabla_mac(&prop_nodo->tabla_mac);
+	inic_tabla_ruteo(&prop_nodo->tabla_ruteo);
 }
 
 static inline void init_prop_intf(prop_intf_t *prop_intf) {
@@ -56,7 +58,6 @@ static inline void init_prop_intf(prop_intf_t *prop_intf) {
 	prop_intf->tiene_dir_ip = false;
 	prop_intf->mascara = 0;
 	memset(prop_intf->dir_ip.dir_ip, 0, TAM_DIR_IP);
-	
 }
 
 char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf);
@@ -79,5 +80,7 @@ void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred);
 #define IF_EN_MODO_L3(ptr_if) ptr_if->prop_intf->tiene_dir_ip
 #define MODO_L2_IF(ptr_if) ptr_if->prop_intf->modo_l2_intf
 #define TABLA_ARP_NODO(ptr_nodo) ptr_nodo->prop_nodo->tabla_arp
+#define TABLA_MAC_NODO(ptr_nodo) ptr_nodo->prop_nodo->tabla_mac
+#define TABLA_RUTEO_NODO(ptr_nodo) ptr_nodo->prop_nodo->tabla_ruteo
 
 #endif

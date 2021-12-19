@@ -50,8 +50,9 @@ obj/Grafico.o: Grafico.c /usr/include/stdc-predef.h inc/Grafico.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h inc/Tipos_red.h \
- inc/Capa2_fwd.h inc/Net.h /usr/include/assert.h inc/Grafico.h \
- inc/Utiles.h /usr/include/arpa/inet.h /usr/include/netinet/in.h \
+ inc/Capa2_fwd.h inc/Capa3_fwd.h inc/Net.h /usr/include/assert.h \
+ inc/Grafico.h inc/Utiles.h /usr/include/arpa/inet.h \
+ /usr/include/netinet/in.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/sys/socket.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \

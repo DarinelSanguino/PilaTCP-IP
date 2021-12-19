@@ -1,5 +1,6 @@
 #include "Net.h"
-//#include "Grafico.h"
+
+extern bool tabla_ruteo_agregar_ruta_local(tabla_ruteo_t *tabla_ruteo, char *destino, char mascara);
 
 static unsigned int obtener_cod_hash(void *ptr, unsigned int tamano) {
 	unsigned int valor = 0, i = 0;
@@ -26,8 +27,9 @@ char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf) {
 
 bool asignar_dir_loopback_nodo(nodo_t *nodo, char *dir_loopback) {
 	assert(dir_loopback);
-	strncpy(nodo->prop_nodo->dir_loopback.dir_ip, dir_loopback, 16);
+	strncpy(DIR_LO_NODO(nodo), dir_loopback, TAM_DIR_IP);
 	nodo->prop_nodo->tiene_dir_loopback = true;
+	tabla_ruteo_agregar_ruta_local(TABLA_RUTEO_NODO(nodo), dir_loopback, 32);
 	return true;
 }
 
@@ -36,8 +38,9 @@ bool asignar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if, char *dir_ip, char 
 	interface_t *interface = obtener_intf_por_nombre(nodo, nombre_if);
 	assert(interface);
 	interface->prop_intf->mascara = mascara;
-	strncpy(interface->prop_intf->dir_ip.dir_ip, dir_ip, 16);
-	interface->prop_intf->tiene_dir_ip = true;
+	strncpy(IP_IF(interface), dir_ip, TAM_DIR_IP);
+	IF_EN_MODO_L3(interface) = true;
+	tabla_ruteo_agregar_ruta_local(TABLA_RUTEO_NODO(nodo), dir_ip, mascara);
 	return true;
 }
 
@@ -51,8 +54,8 @@ void asignar_dir_mac(interface_t *interface) {
 	codigo_hash *= obtener_cod_hash(interface->nombre_if, TAM_NOMBRE_IF);
 	//char *cod_hash;
 	//itoa(codigo_hash, cod_hash, 10);
-	memset(interface->prop_intf->dir_mac.dir_mac, 0, sizeof(interface->prop_intf->dir_mac.dir_mac));
-	memcpy(interface->prop_intf->dir_mac.dir_mac, (char *)&codigo_hash, sizeof(unsigned int));
+	memset(MAC_IF(interface), 0, sizeof(MAC_IF(interface)));
+	memcpy(MAC_IF(interface), (char *)&codigo_hash, sizeof(unsigned int));
 }
 
 char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_total_buf) {

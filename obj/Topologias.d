@@ -50,8 +50,8 @@ obj/Topologias.o: Topologias.c /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h inc/ListaEnlazadaGenerica.h \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/stdbool.h inc/Tipos_red.h \
- inc/Capa2_fwd.h inc/Net.h /usr/include/assert.h inc/Utiles.h \
- /usr/include/arpa/inet.h /usr/include/netinet/in.h \
+ inc/Capa2_fwd.h inc/Capa3_fwd.h inc/Net.h /usr/include/assert.h \
+ inc/Utiles.h /usr/include/arpa/inet.h /usr/include/netinet/in.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/sys/socket.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \

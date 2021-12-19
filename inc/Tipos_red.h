@@ -2,6 +2,7 @@
 #define TIPOS_RED_H_
 
 #include "Capa2_fwd.h"
+#include "Capa3_fwd.h"
 
 #define TAM_NOMBRE_NODO 16
 #define TAM_NOMBRE_IF 16
@@ -72,6 +73,7 @@ struct prop_nodo_ {
 	dir_ip_t dir_loopback;
 	tabla_arp_t *tabla_arp;
 	tabla_mac_t *tabla_mac;
+	tabla_ruteo_t *tabla_ruteo;
 };
 
 struct prop_intf_ {

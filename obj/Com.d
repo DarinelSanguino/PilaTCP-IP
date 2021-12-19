@@ -87,7 +87,7 @@ obj/Com.o: Com.c /usr/include/stdc-predef.h inc/Com.h \
  /usr/include/string.h /usr/include/strings.h inc/Grafico.h \
  inc/ListaEnlazadaGenerica.h \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/stdbool.h inc/Tipos_red.h \
- inc/Capa2_fwd.h inc/Net.h /usr/include/assert.h inc/Utiles.h \
- /usr/include/arpa/inet.h inc/Net_fwd.h inc/Capa2.h \
+ inc/Capa2_fwd.h inc/Capa3_fwd.h inc/Net.h /usr/include/assert.h \
+ inc/Utiles.h /usr/include/arpa/inet.h inc/Net_fwd.h inc/Capa2.h \
  /usr/lib/gcc/x86_64-linux-gnu/9/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h inc/consttcp.h

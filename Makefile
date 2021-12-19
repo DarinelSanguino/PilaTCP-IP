@@ -8,7 +8,8 @@ OBJS = $(OBJ_DIR)/prueba.o \
 	   $(OBJ_DIR)/Com.o \
 	   $(OBJ_DIR)/Utiles.o \
 	   $(OBJ_DIR)/Capa2.o \
-	   $(OBJ_DIR)/SwitchCapa2.o
+	   $(OBJ_DIR)/SwitchCapa2.o \
+	   $(OBJ_DIR)/Capa3.o
 BIN_DIR = ./bin
 OBJ_DIR = ./obj
 INC_DIR = ./inc

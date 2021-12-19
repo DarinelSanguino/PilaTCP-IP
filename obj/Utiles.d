@@ -69,4 +69,5 @@ obj/Utiles.o: Utiles.c /usr/include/stdc-predef.h inc/Utiles.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h inc/Tipos_red.h \
- inc/Capa2_fwd.h inc/Net.h /usr/include/assert.h inc/Utiles.h
+ inc/Capa2_fwd.h inc/Capa3_fwd.h inc/Net.h /usr/include/assert.h \
+ inc/Utiles.h

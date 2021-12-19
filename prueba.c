@@ -9,6 +9,7 @@
 extern grafico_t *const_primera_topo();
 extern grafico_t *const_topologia_switch_capa2();
 extern grafico_t * const_topologia_doble_switch();
+grafico_t * const_topologia_tres_nodos();
 grafico_t *topo = NULL;
 
 
@@ -16,7 +17,7 @@ int main(void) {
 	inic_cli_red();
 	//grafico_t *primera_topo = const_primera_topo();
 	//topo = const_topologia_switch_capa2();
-	topo = const_topologia_doble_switch();
+	topo = const_topologia_tres_nodos();
 
 	sleep(2);
 	/*nodo_t *nodo_trans = obtener_nodo_por_nombre(topo, "R0");
