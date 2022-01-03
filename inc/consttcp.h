@@ -6,5 +6,7 @@
 #define MENSAJE_ARP 0x806
 #define VLAN_8021Q 0x8100
 #define BROADCAST_MAC 0xFFFFFFFFFFFF
+#define IPv4 0x0800
+#define ICMP 1
 
 #endif

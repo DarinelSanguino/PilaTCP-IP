@@ -144,6 +144,7 @@ void mostrar_dir_mac(const dir_mac_t *dir_mac) {
 }
 
 interface_t* obtener_intf_correspondiente_a_nodo(nodo_t *nodo, char *dir_ip) {
+	printf("%s\n", __FUNCTION__);
 	interface_t *interface_actual = NULL;
 	char *dir_ip_local;
 	char mascara;

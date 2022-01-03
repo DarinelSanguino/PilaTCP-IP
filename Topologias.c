@@ -131,9 +131,9 @@ grafico_t * const_topologia_doble_switch() {
 
 grafico_t * const_topologia_tres_nodos() {
 	grafico_t *grafico_tres_nodos = crear_nuevo_grafico("Grafico con 3 nodos");
-	nodo_t *nodo_H0 = crear_nodo_grafico(grafico_tres_nodos, "H0");	
+	nodo_t *nodo_H0 = crear_nodo_grafico(grafico_tres_nodos, "H0");
 	nodo_t *nodo_H1 = crear_nodo_grafico(grafico_tres_nodos, "H1");
-	nodo_t *nodo_H2 = crear_nodo_grafico(grafico_tres_nodos, "H2");	
+	nodo_t *nodo_H2 = crear_nodo_grafico(grafico_tres_nodos, "H2");
 
 	insertar_enlace_entre_nodos(nodo_H0, nodo_H1, "ethR0/0", "ethR1/0", 1);
 	insertar_enlace_entre_nodos(nodo_H1, nodo_H2, "ethR1/1", "ethR2/0", 1);

@@ -1,12 +1,15 @@
 #include "Capa2.h"
 
+extern int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_origen);
 extern void recibir_trama_switch_capa2(interface_t *interface, char *paquete, unsigned int tamano_paq, bool etiqueta_vlan);
+extern bool nodo_es_destino(nodo_t *nodo, char *ip_destino);
+extern void subir_paquete_a_capa3(nodo_t *nodo_rec, interface_t *interface_rec, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo);
 
 static inline unsigned int OBTENER_ID_VLAN_8021Q(cab_vlan_8021q_t *cab_vlan_8021q) {
 	return (unsigned int) (cab_vlan_8021q->VID);
 }
 
-static inline char * OBTENER_PAYLOAD_CAB_ETHERNET(cab_ethernet_t *cab_ethernet) {
+static char * OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_t *cab_ethernet) {
 	if(paquete_tiene_etiqueta_vlan(cab_ethernet)) {
 		return ((cab_ethernet_vlan_t *) cab_ethernet)->payload;
 	}
@@ -24,13 +27,66 @@ static inline void ASIGNAR_FCS_ETH(cab_ethernet_t *cab_ethernet, unsigned int ta
 	}
 }
 
-static inline cab_ethernet_t * ASIGNAR_PAYLOAD_CAB_ETHERNET(char *paquete, unsigned int tamano_paq) {
+static cab_ethernet_t * ASIGNAR_PAYLOAD_CAB_ETHERNET(char *paquete, unsigned int tamano_paq) {
 	char temp[tamano_paq];
 	memcpy(temp, paquete, tamano_paq);
-	cab_ethernet_t *cab_ethernet = (cab_ethernet_t*)(paquete - TAM_CAB_ETH_EXC_PAYLOAD);
+	cab_ethernet_t *cab_ethernet = (cab_ethernet_t *)(paquete - TAM_CAB_ETH_EXC_PAYLOAD);
 	memset(cab_ethernet, 0, sizeof(cab_ethernet_t));
 	memcpy(cab_ethernet->payload, temp, tamano_paq);
 	return cab_ethernet;
+}
+
+static inline unsigned int OBTENER_TAM_DE_CAB_ETHERNET_EXC_PAYLOAD(cab_ethernet_t *cab_ethernet) {
+	if(paquete_tiene_etiqueta_vlan(cab_ethernet)) {
+		return TAM_CAB_ETH_VLAN_EXC_PAYLOAD;
+	}
+	return TAM_CAB_ETH_EXC_PAYLOAD;
+}
+
+static void enviar_mensaje_arp_respuesta(cab_ethernet_t *cab_ethernet_entrada, interface_t *intf_salida) {
+	unsigned int tamano_payload = sizeof(cab_arp_t);
+	cab_arp_t *cab_arp_entrada = (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_entrada);
+	cab_ethernet_t *cab_ethernet_resp = calloc(1, sizeof(cab_ethernet_t));
+	memcpy(cab_ethernet_resp->mac_destino.dir_mac, cab_arp_entrada->mac_origen.dir_mac, TAM_DIR_MAC);
+	memcpy(cab_ethernet_resp->mac_origen.dir_mac, MAC_IF(intf_salida), TAM_DIR_MAC);
+	cab_ethernet_resp->tipo = MENSAJE_ARP;
+	cab_arp_t *cab_arp_resp = (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet_resp);
+	cab_arp_resp->tipo_hw = 1;
+	cab_arp_resp->tipo_proto = IPv4;
+	cab_arp_resp->lon_dir_hw = sizeof(dir_mac_t);
+	cab_arp_resp->lon_dir_proto = 4;
+	cab_arp_resp->cod_op = RESPUESTA_ARP;
+	memcpy(cab_arp_resp->mac_origen.dir_mac, MAC_IF(intf_salida), TAM_DIR_MAC);
+	
+	cab_arp_resp->ip_origen = cab_arp_entrada->ip_destino;
+	memcpy(cab_arp_resp->mac_destino.dir_mac, cab_arp_entrada->mac_origen.dir_mac, TAM_DIR_MAC);
+	cab_arp_resp->ip_destino = cab_arp_entrada->ip_origen;
+	FCS_ETH(cab_ethernet_resp, sizeof(cab_arp_t)) = 0;
+	
+	enviar_paquete((char *) cab_ethernet_resp, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);
+	free(cab_ethernet_resp);
+}
+
+static void procesar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_entrada, cab_ethernet_t *cab_ethernet) {
+	printf("%s: mensaje broadcast ARP recibido en la interface %s del nodo %s", __FUNCTION__, intf_entrada->nombre_if, nodo->nombre_nodo);
+	cab_arp_t *cab_arp = (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet);
+	uint32_t ip_destino_arp = cab_arp->ip_destino;
+	char ip_destino[TAM_DIR_IP];
+	memset(ip_destino, 0, TAM_DIR_IP);
+	inet_ntop(AF_INET, &ip_destino_arp, ip_destino, TAM_DIR_IP);
+	ip_destino[TAM_DIR_IP - 1] = '\0';
+	if(strncmp(intf_entrada->prop_intf->dir_ip.dir_ip, ip_destino, TAM_DIR_IP) != 0) {
+		printf("%s: solicitud broadcast ARP descartada. La IP de destino %s no coincide con la IP %s de la interface.\n",
+			nodo->nombre_nodo, ip_destino, IP_IF(intf_entrada));
+		return;
+	}
+	actualizar_tabla_arp(TABLA_ARP_NODO(nodo), cab_arp, intf_entrada);
+	enviar_mensaje_arp_respuesta(cab_ethernet, intf_entrada);
+}
+
+static void procesar_mensaje_respuesta_arp(nodo_t *nodo, interface_t *intf_entrada, cab_ethernet_t *cab_ethernet) {
+	printf("%s: mensaje ARP recibido en la interface %s del nodo %s", __FUNCTION__, intf_entrada->nombre_if, nodo->nombre_nodo);
+	actualizar_tabla_arp(TABLA_ARP_NODO(nodo), (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet), intf_entrada);
 }
 
 void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_intf) {
@@ -38,17 +94,72 @@ void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_int
 	if(!interface) {
 		printf("Error: no se encontró la interface %s.\n", nombre_if);
 		return;
-	}
-	/*****PENDIENTE: considerar los estados en los que se puede encontrar la interface.******/
+	}	
 	interface->prop_intf->modo_l2_intf = modo_l2_intf;
 }
 
-void mover_paq_a_capa3(nodo_t *nodo_rec, interface_t *interface, char *paquete, size_t tamano_paq) {
-	return;
+void bajar_paquete_a_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_gw, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo) {
+	switch(num_protocolo) {
+		case IPv4:
+			recibir_paquete_ip_en_capa2(nodo, intf_salida, ip_gw, paquete, tamano_paq);
+			break;
+		default:
+			break;
+	}	
+}
+
+bool rellenar_cab_ethernet(nodo_t *nodo, interface_t *intf_salida, char *ip_destino, cab_ethernet_t *cab_ethernet) {
+	entrada_arp_t *entrada_arp = busqueda_tabla_arp(TABLA_ARP_NODO(nodo), ip_destino);
+	if(!entrada_arp) {
+		printf("Implementación pendiente.\n");
+		return false;
+	}
+	memcpy(cab_ethernet->mac_destino.dir_mac, entrada_arp->dir_mac.dir_mac, sizeof(dir_mac_t));
+	memcpy(cab_ethernet->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));
+	cab_ethernet->tipo = IPv4;
+	return true;
+}
+
+void recibir_paquete_ip_en_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_destino, char *paquete, unsigned int tamano_paq) {
+	printf("%s\n", __FUNCTION__);
+	cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) calloc(1, TAM_CAB_ETH_EXC_PAYLOAD + tamano_paq);
+	char dir_ip[TAM_DIR_IP];
+	memset(dir_ip, 0, TAM_DIR_IP);
+	inet_ntop(AF_INET, &ip_destino, dir_ip, TAM_DIR_IP);
+
+	memcpy(cab_ethernet->payload, paquete, tamano_paq);
+
+	if(intf_salida[0] != '\0') {
+		interface_t *interface_salida = obtener_intf_por_nombre(nodo, intf_salida);
+		if(interface_salida) {
+			if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet)) {
+				enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_paq, interface_salida);
+			}
+		}
+		else {
+			printf("Error: %s: ninguna subred apropiada para el envío del paquete a %s.\n", nodo->nombre_nodo, dir_ip);
+		}		
+	}
+	else {
+		if(nodo_es_destino(nodo, dir_ip)) {
+			subir_paquete_a_capa3(nodo, NULL, OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet), tamano_paq, IPv4);
+		}
+		else {
+			interface_t *interface_salida = obtener_intf_correspondiente_a_nodo(nodo, dir_ip);
+			if(interface_salida) {
+				if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet)) {
+					enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_paq, interface_salida);
+				}
+			}
+			else {
+				printf("Error: %s: ninguna subred apropiada para el envío del paquete a %s.\n", nodo->nombre_nodo, dir_ip);
+			}
+		}
+	}
+	free(cab_ethernet);
 }
 
 bool recibir_trama_capa2_en_interface(interface_t *interface, cab_ethernet_t *cab_ethernet, unsigned int tamano_paq, bool *etiqueta_vlan) {
-	/***********PENDIENTE: verificar si el nombre es adecuado.*************/
 	unsigned char *mac = MAC_IF(interface);
 	cab_vlan_8021q_t *cab_vlan_8021q = paquete_tiene_etiqueta_vlan(cab_ethernet);
 	if(IF_EN_MODO_L3(interface)) {
@@ -69,10 +180,7 @@ bool recibir_trama_capa2_en_interface(interface_t *interface, cab_ethernet_t *ca
 		}
 		else {
 			if(vlan == -1) return true;
-			else {
-				//Modificar cab_ethernet para agregar para agregar el segemento VLAN.
-				//printf("Etiquetando paquete con la ID de la VLAN.\n");
-				//cab_ethernet = etiquetar_paquete_con_id_vlan(cab_ethernet, vlan, tamano_paq);
+			else {				
 				*etiqueta_vlan = true;
 				return true;
 			}
@@ -114,14 +222,15 @@ void recibir_trama_capa2(nodo_t *nodo_rec, interface_t *interface, char *paquete
 					}
 					break;
 				}
+			case IPv4:
+				subir_paquete_a_capa3(nodo_rec, interface, OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet), tamano_paq - OBTENER_TAM_DE_CAB_ETHERNET_EXC_PAYLOAD(cab_ethernet), cab_ethernet->tipo);
+				break;
 			default:
-				printf("No se identificó como mensaje ARP.\n");
-				mover_paq_a_capa3(nodo_rec, interface, paquete, tamano_paq);
+				printf("No se identificó el tipo de mensaje.\n");
 				break;
 		}
 	}
-	else if(MODO_L2_IF(interface) == ACCESO || MODO_L2_IF(interface) == TRONCAL) {
-		/******PENDIENTE: revisar el tipo de dato del segundo parámetro que debe recibir la función****/
+	else if(MODO_L2_IF(interface) == ACCESO || MODO_L2_IF(interface) == TRONCAL) {		
 		recibir_trama_switch_capa2(interface, (char *) cab_ethernet, tamano_paq, etiqueta_vlan);
 	}
 }
@@ -172,7 +281,6 @@ void eliminar_entrada_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface_entrada) {
 	entrada_arp_t *entrada_arp = calloc(1, sizeof(entrada_arp_t));
 	uint32_t dir_ip = cab_arp->ip_origen;
-	dir_ip = htonl(dir_ip);
 	char dir_ip_arp[TAM_DIR_IP];
 	inet_ntop(AF_INET, &dir_ip, dir_ip_arp, TAM_DIR_IP);
 	dir_ip_arp[TAM_DIR_IP - 1] = '\0';
@@ -221,17 +329,12 @@ void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char
 	cab_arp->cod_op = SOLIC_BROAD_ARP;
 	memcpy(cab_arp->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));
 
-	inet_pton(AF_INET, IP_IF(intf_salida), &cab_arp->ip_origen);
-	cab_arp->ip_origen = htonl(cab_arp->ip_origen);
+	inet_pton(AF_INET, IP_IF(intf_salida), &cab_arp->ip_origen);	
 	capa2_llenar_con_mac_broadcast(cab_arp->mac_destino.dir_mac);
-
-	/*********PENDIENTE: ¿uint32_t?**********/
 	inet_pton(AF_INET, dir_ip, &cab_arp->ip_destino);
-	cab_arp->ip_destino = htonl(cab_arp->ip_destino);
-
+	
 	FCS_ETH(cab_ethernet, sizeof(cab_ethernet_t)) = 0;
-	enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);
-	/******PENDIENTE: revisar las demás solicitudes de memoria******/
+	enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);	
 	free(cab_ethernet);
 }
 
@@ -284,7 +387,6 @@ void mostrar_tabla_mac(tabla_mac_t *tabla_mac) {
 	} FIN_ITERACION;
 }
 
-/**********PENDIENTE: actualizar la variable que indica el tamaño del paquete**********/
 cab_ethernet_t * etiquetar_paquete_con_id_vlan(cab_ethernet_t *cab_ethernet, int id_vlan, unsigned int *tamano_paq) {
 	cab_vlan_8021q_t *cab_vlan_8021q = NULL;
 	cab_vlan_8021q = paquete_tiene_etiqueta_vlan(cab_ethernet);
@@ -320,8 +422,7 @@ cab_ethernet_t * quitar_etiqueta_paquete_con_id_vlan(cab_ethernet_t *cab_etherne
 
 	cab_ethernet_vlan_t *cab_ethernet_vlan_temporal = calloc(1, sizeof(cab_ethernet_vlan_t));
 	memcpy(cab_ethernet_vlan_temporal, cab_ethernet, *tamano_paq);
-	//cab_ethernet_vlan_t *cab_prueba = cab_ethernet;
-	//unsigned int tt = TAM_CAB_ETH_VLAN_EXC_PAYLOAD - sizeof(cab_ethernet->tipo) - sizeof(cab_ethernet->FCS);
+	
 	memset(cab_ethernet, 0, TAM_CAB_ETH_VLAN_EXC_PAYLOAD - sizeof(cab_ethernet->tipo) - sizeof(cab_ethernet->FCS));
 	cab_ethernet = (cab_ethernet_t *)((char *)cab_ethernet + sizeof(cab_vlan_8021q_t));
 	memcpy(cab_ethernet->mac_destino.dir_mac, cab_ethernet_vlan_temporal->mac_destino.dir_mac, TAM_DIR_MAC);

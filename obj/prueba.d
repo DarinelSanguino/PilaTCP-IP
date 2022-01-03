@@ -94,4 +94,4 @@ obj/prueba.o: prueba.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  inc/consttcp.h CommandParser/libcli.h CommandParser/libcliid.h \
  CommandParser/cmd_hier.h CommandParser/clistd.h CommandParser/cliconst.h \
  clired.c CommandParser/cmdtlv.h CommandParser/serialize.h codigoscmd.h \
- inc/Capa3.h
+ inc/Capa3.h inc/Capa5.h inc/Grafico_fwd.h

@@ -261,3 +261,275 @@ conf nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
 show nodo H0 tabla-ruteo
 conf nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
 show nodo H0 tabla-ruteo
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+show nodo H0 tabla-ruteo
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+show nodo H0 tabla-ruteo
+show nodo H1 tabla-ruteo
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+show nodo H0 tabla-ruteo
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+run nodo H0 ping 11.1.1.1
+show nodo H0 tabla-ruteo
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 11.1.1.1
+show nodo H0 tabla-ruteo
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 11.1.1.1
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 11.1.1.1
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 11.1.1.1
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 11.1.1.1
+run nodo H0 ping 10.1.1.2
+run nodo H0 ping 122.1.1.1
+show nodo H0 tabla-ruteo
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 122.1.1.1
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 11.1.1.1
+run nodo H0 ping 122.1.1.1
+run nodo H0 ping 10.1.1.2
+run nodo H1 ping 122.1.1.2
+run nodo H2 ping 122.1.1.3
+show nodo H0 tabla-ruteo
+show nodo H1 tabla-ruteo
+show nodo H2 tabla-ruteo
+run nodo H1 ping 122.1.1.3
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 122.1.1.1
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 122.1.1.1
+run nodo H0 ping 122.1.1.1
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 122.1.1.1
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+show nodo H0 arp
+run nodo H0 resolver-arp 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+show nodo H0 arp
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+show nodo H0 arp
+run nodo H1 resolver-arp 11.1.1.2
+show nodo H1 arp
+run nodo H0 ping 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 11.1.1.1
+run nodo H0 ping 122.1.1.1
+run nodo H0 ping 10.1.1.1
+run nodo H0 ping 10.1.1.2
+run nodo H0 ping 122.1.1.2
+run nodo H0 ping 122.1.1.3
+show nodo H1 tabla-ruteo
+config nodo H1 ruta 122.1.1.3 32 11.1.1.2 ethR1/1
+show nodo H1 tabla-ruteo
+run nodo H0 ping 122.1.1.3
+run nodo H1 ping 122.1.1.3
+show nodo H0 tabla-ruteo
+run nodo H0 ping 122.1.1.2
+config nodo H0 ruta 122.1.1.3 32 122.1.1.2 ethR0/0
+show nodo H0 tabla-ruteo
+run nodo H0 ping 122.1.1.3
+config nodo H0 ruta 122.1.1.2 32 10.1.1.2 ethR0/0
+run nodo H0 ping 122.1.1.3
+show nodo H1 tabla-ruteo
+show nodo H0 tabla-ruteo
+run nodo H0 ping 122.1.1.2
+run nodo H1 ping 122.1.1.3
+run nodo H0 ping 122.1.1.3
+config nodo H0 ruta 122.1.1.2 32 10.1.1.2 ethR0/0
+config nodo H0 ruta 122.1.1.3 32 122.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+show nodo H0 tabla-ruteo
+show nodo H1 tabla-ruteo
+run nodo H0 ping 122.1.1.3
+config nodo H0 ruta 122.1.1.2 32 10.1.1.2 ethR0/0
+config nodo H0 ruta 122.1.1.3 32 122.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 122.1.1.3
+run nodo H0 resolver-arp 122.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+config nodo H1 ruta 122.1.1.3 32 11.1.1.1 ethR1/1
+config nodo H0 ruta 122.1.1.3 32 10.1.1.2 ethR0/0
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+run nodo H0 ping 10.1.1.2
+run nodo H0 ping 10.1.1.1
+run nodo H0 ping 122.1.1.3
+config nodo H1 ruta 122.1.1.3 32 11.1.1.2 ethR1/1
+show nodo H1 tabla-ruteo
+run nodo H0 ping 122.1.1.3
+run nodo H2 ping 122.1.1.3
+run nodo H2 ping 122.1.1.2
+run nodo H2 ping 11.1.1.2

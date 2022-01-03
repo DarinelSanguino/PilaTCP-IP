@@ -1,0 +1,2 @@
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+show nodo H0 tabla-ruteo
