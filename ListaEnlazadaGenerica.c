@@ -55,6 +55,17 @@ void eliminar(Lista_t *lista, NodoLista_t *nodo_lista) {
 	return;
 }
 
+void limpiar(Lista_t *lista) {
+	NodoLista_t *nodo_previo = NULL;
+	NodoLista_t *nodo_actual = lista->nodo_inicio;
+	while(nodo_actual != NULL) {
+		nodo_previo = nodo_actual;
+		nodo_actual = nodo_actual->sig_nodo;
+		free(nodo_previo);
+	}
+	lista->vacia = true;
+}
+
 bool lista_vacia(Lista_t *lista) {
 	return lista->vacia;
 }
