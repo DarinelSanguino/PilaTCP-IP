@@ -86,7 +86,22 @@ static void procesar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_ent
 
 static void procesar_mensaje_respuesta_arp(nodo_t *nodo, interface_t *intf_entrada, cab_ethernet_t *cab_ethernet) {
 	printf("%s: mensaje ARP recibido en la interface %s del nodo %s", __FUNCTION__, intf_entrada->nombre_if, nodo->nombre_nodo);
-	actualizar_tabla_arp(TABLA_ARP_NODO(nodo), (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet), intf_entrada);
+	completar_entrada_tabla_arp(TABLA_ARP_NODO(nodo), (cab_arp_t *) OBTENER_PAYLOAD_DE_CAB_ETHERNET(cab_ethernet), intf_entrada);
+}
+
+static void _procesamiento_arp_pendiente(nodo_t *nodo, interface_t *intf_salida, entrada_arp_t *entrada_arp, entrada_arp_pendiente_t *entrada_arp_pendiente) {
+	cab_ethernet_t *cab_ethernet = (cab_ethernet_t *)(entrada_arp_pendiente->paquete);	
+	memcpy(cab_ethernet->mac_destino.dir_mac, entrada_arp->dir_mac.dir_mac, sizeof(dir_mac_t));
+	memcpy(cab_ethernet->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));
+	enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + entrada_arp_pendiente->tamano_paq, intf_salida);
+}
+
+static void procesamiento_arp_pendiente(nodo_t *nodo, interface_t *intf_salida, entrada_arp_t *entrada_arp) {
+	ITERAR_LISTA_ENLAZADA(entrada_arp->lista_paq_arp_pendientes) {
+		entrada_arp_pendiente_t *entrada_arp_pendiente = *(entrada_arp_pendiente_t **)(nodo_actual->elemento);
+		_procesamiento_arp_pendiente(nodo, intf_salida, entrada_arp, entrada_arp_pendiente);
+		eliminar(entrada_arp->lista_paq_arp_pendientes, nodo_actual);
+	} FIN_ITERACION;
 }
 
 void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_intf) {
@@ -108,10 +123,18 @@ void bajar_paquete_a_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_gw, char
 	}	
 }
 
-bool rellenar_cab_ethernet(nodo_t *nodo, interface_t *intf_salida, char *ip_destino, cab_ethernet_t *cab_ethernet) {
+bool rellenar_cab_ethernet(nodo_t *nodo, interface_t *intf_salida, char *ip_destino, cab_ethernet_t *cab_ethernet, unsigned int tamano_paq) {
 	entrada_arp_t *entrada_arp = busqueda_tabla_arp(TABLA_ARP_NODO(nodo), ip_destino);
 	if(!entrada_arp) {
-		printf("Implementación pendiente.\n");
+		enviar_solicitud_broadcast_arp(nodo, intf_salida, ip_destino);
+		entrada_arp = crear_entrada_arp(TABLA_ARP_NODO(nodo), ip_destino, NULL, intf_salida);
+		if(entrada_arp) {
+			agregar_paquete_lista_arp_pendiente(entrada_arp, (char *)cab_ethernet, tamano_paq);
+		}	
+		return false;
+	}
+	if(!entrada_arp->esta_completa) {
+		agregar_paquete_lista_arp_pendiente(entrada_arp, (char *)cab_ethernet, tamano_paq);
 		return false;
 	}
 	memcpy(cab_ethernet->mac_destino.dir_mac, entrada_arp->dir_mac.dir_mac, sizeof(dir_mac_t));
@@ -132,13 +155,13 @@ void recibir_paquete_ip_en_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_de
 	if(intf_salida[0] != '\0') {
 		interface_t *interface_salida = obtener_intf_por_nombre(nodo, intf_salida);
 		if(interface_salida) {
-			if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet)) {
+			if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet, tamano_paq)) {
 				enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_paq, interface_salida);
 			}
 		}
 		else {
 			printf("Error: %s: ninguna subred apropiada para el envío del paquete a %s.\n", nodo->nombre_nodo, dir_ip);
-		}		
+		}	
 	}
 	else {
 		if(nodo_es_destino(nodo, dir_ip)) {
@@ -147,7 +170,7 @@ void recibir_paquete_ip_en_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_de
 		else {
 			interface_t *interface_salida = obtener_intf_correspondiente_a_nodo(nodo, dir_ip);
 			if(interface_salida) {
-				if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet)) {
+				if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet, tamano_paq)) {
 					enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_paq, interface_salida);
 				}
 			}
@@ -250,6 +273,15 @@ void inic_tabla_arp(tabla_arp_t **tabla_arp) {
 	(*tabla_arp)->entradas_arp->vacia = true;
 }
 
+static void inic_entrada_arp(entrada_arp_t *entrada_arp) {
+	entrada_arp->lista_paq_arp_pendientes = calloc(1, sizeof(Lista_t));
+	entrada_arp->lista_paq_arp_pendientes->vacia = true;
+	memset(entrada_arp->dir_ip.dir_ip, 0, TAM_DIR_IP);
+	memset(entrada_arp->dir_mac.dir_mac, 0, TAM_DIR_MAC);
+	memset(entrada_arp->nombre_if, 0, TAM_NOMBRE_IF);
+	entrada_arp->esta_completa = false;
+}
+
 entrada_arp_t * busqueda_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 	ITERAR_LISTA_ENLAZADA(tabla_arp->entradas_arp) {
 		entrada_arp_t *entrada_arp = *(entrada_arp_t **)(nodo_actual->elemento);
@@ -260,12 +292,35 @@ entrada_arp_t * busqueda_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 	return NULL;
 }
 
-bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_arp) {
+bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_arp, interface_t *interface) {
 	entrada_arp_t *entrada_arp_antigua = busqueda_tabla_arp(tabla_arp, entrada_arp->dir_ip.dir_ip);
 	if(entrada_arp_antigua) {
+		if(!entrada_arp_antigua->esta_completa) {
+			procesamiento_arp_pendiente(interface->nodo_padre, interface, entrada_arp_antigua);
+		}
 		eliminar_entrada_tabla_arp(tabla_arp, entrada_arp->dir_ip.dir_ip);
 	}
 	return insertar(tabla_arp->entradas_arp, &entrada_arp, sizeof(entrada_arp_t *));
+}
+
+//Debe ejecutarse como resultado de procesar_mensaje_respuesta_arp
+void completar_entrada_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface) {
+	uint32_t dir_ip = cab_arp->ip_origen;
+	char dir_ip_arp[TAM_DIR_IP];
+	inet_ntop(AF_INET, &dir_ip, dir_ip_arp, TAM_DIR_IP);
+	dir_ip_arp[TAM_DIR_IP - 1] = '\0';
+	entrada_arp_t *entrada_arp_antigua = busqueda_tabla_arp(tabla_arp, dir_ip_arp);
+	if(entrada_arp_antigua) {
+		if(!entrada_arp_antigua->esta_completa) {
+			memcpy(entrada_arp_antigua->dir_mac.dir_mac, cab_arp->mac_origen.dir_mac, TAM_DIR_MAC);	
+			strncpy(entrada_arp_antigua->nombre_if, interface->nombre_if, TAM_NOMBRE_IF);
+			entrada_arp_antigua->esta_completa = true;
+			procesamiento_arp_pendiente(interface->nodo_padre, interface, entrada_arp_antigua);
+		}
+	}
+	else {
+		assert(0);
+	}
 }
 
 void eliminar_entrada_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
@@ -278,16 +333,38 @@ void eliminar_entrada_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip) {
 	} FIN_ITERACION;
 }
 
-void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface_entrada) {
+entrada_arp_t * crear_entrada_arp(tabla_arp_t *tabla_arp, char *dir_ip, unsigned char *dir_mac, interface_t *interface) {
 	entrada_arp_t *entrada_arp = calloc(1, sizeof(entrada_arp_t));
+	inic_entrada_arp(entrada_arp);
+	if(!entrada_arp) {
+		printf("Error: la entrada ARP no pudo ser creada.\n");
+		return NULL;
+	}
+	memcpy(entrada_arp->dir_ip.dir_ip, dir_ip, TAM_DIR_IP);
+	if(dir_mac) {
+		memcpy(entrada_arp->dir_mac.dir_mac, dir_mac, TAM_DIR_MAC);
+		entrada_arp->esta_completa = true;
+	}
+	else entrada_arp->esta_completa = false;
+	strncpy(entrada_arp->nombre_if, interface->nombre_if, TAM_NOMBRE_IF);
+	if(!agregar_entrada_tabla_arp(tabla_arp, entrada_arp, interface)) {
+		printf("Error: la entrada no pudo agregarse a la tabla ARP del nodo %s.\n", interface->nodo_padre->nombre_nodo);
+		return NULL;
+	}
+	return entrada_arp;
+}
+
+void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface_entrada) {
+	//entrada_arp_t *entrada_arp = calloc(1, sizeof(entrada_arp_t));
 	uint32_t dir_ip = cab_arp->ip_origen;
 	char dir_ip_arp[TAM_DIR_IP];
 	inet_ntop(AF_INET, &dir_ip, dir_ip_arp, TAM_DIR_IP);
 	dir_ip_arp[TAM_DIR_IP - 1] = '\0';
-	memcpy(entrada_arp->dir_ip.dir_ip, dir_ip_arp, TAM_DIR_IP);
+	/*memcpy(entrada_arp->dir_ip.dir_ip, dir_ip_arp, TAM_DIR_IP);
 	memcpy(entrada_arp->dir_mac.dir_mac, cab_arp->mac_origen.dir_mac, TAM_DIR_MAC);	
 	strncpy(entrada_arp->nombre_if, interface_entrada->nombre_if, TAM_NOMBRE_IF);
-	agregar_entrada_tabla_arp(tabla_arp, entrada_arp);
+	agregar_entrada_tabla_arp(tabla_arp, entrada_arp);*/
+	crear_entrada_arp(tabla_arp, dir_ip_arp, cab_arp->mac_origen.dir_mac, interface_entrada);
 }
 
 void mostrar_tabla_arp(tabla_arp_t *tabla_arp) {
@@ -304,6 +381,13 @@ void mostrar_tabla_arp(tabla_arp_t *tabla_arp) {
 			entrada_arp->dir_mac.dir_mac[5],
 			entrada_arp->nombre_if);
 	} FIN_ITERACION;
+}
+
+void agregar_paquete_lista_arp_pendiente(entrada_arp_t *entrada_arp, char *paquete, unsigned int tamano_paq) {
+	entrada_arp_pendiente_t *entrada_arp_pendiente = calloc(1, sizeof(entrada_arp_pendiente_t));
+	entrada_arp_pendiente->tamano_paq = tamano_paq;
+	entrada_arp_pendiente->paquete = paquete;
+	insertar(entrada_arp->lista_paq_arp_pendientes, &entrada_arp_pendiente, sizeof(entrada_arp_pendiente_t *));
 }
 
 void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char *dir_ip) {

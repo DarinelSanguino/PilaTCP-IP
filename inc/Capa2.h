@@ -54,7 +54,14 @@ struct cab_ethernet_vlan_ {
 struct entrada_arp_ {
 	dir_ip_t dir_ip;
 	dir_mac_t dir_mac;	
-	char nombre_if[16];	
+	char nombre_if[16];
+	bool esta_completa;
+	Lista_t *lista_paq_arp_pendientes;
+};
+
+struct entrada_arp_pendiente_ {
+	unsigned int tamano_paq;
+	char *paquete;
 };
 
 struct tabla_arp_ {
@@ -80,7 +87,7 @@ struct tabla_mac_ {
 void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_intf);
 
 void bajar_paquete_a_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_gw, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo);
-bool rellenar_cab_ethernet(nodo_t *nodo, interface_t *intf_salida, char *ip_destino, cab_ethernet_t *cab_ethernet);
+bool rellenar_cab_ethernet(nodo_t *nodo, interface_t *intf_salida, char *ip_destino, cab_ethernet_t *cab_ethernet, unsigned int tamano_paq);
 void recibir_paquete_ip_en_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_gw, char *paquete, unsigned int tamano_payload);
 
 bool recibir_trama_capa2_en_interface(interface_t *interface, cab_ethernet_t *cab_ethernet, unsigned int tamano_paq, bool *etiqueta_vlan);
@@ -89,10 +96,13 @@ cab_vlan_8021q_t * paquete_tiene_etiqueta_vlan(cab_ethernet_t *cab_ethernet);
 
 void inic_tabla_arp(tabla_arp_t **tabla_arp);
 entrada_arp_t * busqueda_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip);
-bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_arp);
+bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_arp, interface_t *interface);
+void completar_entrada_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface);
 void eliminar_entrada_tabla_arp(tabla_arp_t *tabla_arp, char *dir_ip);
+entrada_arp_t * crear_entrada_arp(tabla_arp_t *tabla_arp, char *dir_ip, unsigned char *dir_mac, interface_t *interface_entrada);
 void actualizar_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface);
 void mostrar_tabla_arp(tabla_arp_t *tabla_arp);
+void agregar_paquete_lista_arp_pendiente(entrada_arp_t *entrada_arp, char *paquete, unsigned int tamano_paq);
 void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char *dir_ip);
 
 void inic_tabla_mac(tabla_mac_t **tabla_mac);
