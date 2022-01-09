@@ -68,7 +68,6 @@ void inicializar_nodo(nodo_t *nodo) {
 	init_prop_nodo(nodo->prop_nodo);
 }
 
-
 /**********CAMBIO_TEMPORAL***************************/
 nodo_t* obtener_elemento(Lista_t *lista, char *nombre_nodo) {
 	ITERAR_LISTA_ENLAZADA(lista) {
@@ -87,7 +86,6 @@ void inicializar_grafico(grafico_t *grafico) {
 }
 
 void mostrar_grafico(const grafico_t *grafico) {
-	/*****PENDIENTE:violación de segmento*****/
 	printf("%s\n", grafico->nombre_topologia);
 	//nodo_t *primero = *(nodo_t **)(grafico->lista_nodos->nodo_inicio->elemento);	
 	//printf("Nodo primero: %s", primero->nombre_nodo);

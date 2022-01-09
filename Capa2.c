@@ -305,7 +305,6 @@ bool agregar_entrada_tabla_arp(tabla_arp_t *tabla_arp, entrada_arp_t *entrada_ar
 	return insertar(tabla_arp->entradas_arp, &entrada_arp, sizeof(entrada_arp_t *));
 }
 
-//Debe ejecutarse como resultado de procesar_mensaje_respuesta_arp
 void completar_entrada_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, interface_t *interface) {
 	uint32_t dir_ip = cab_arp->ip_origen;
 	char dir_ip_arp[TAM_DIR_IP];
@@ -321,7 +320,7 @@ void completar_entrada_tabla_arp(tabla_arp_t *tabla_arp, cab_arp_t *cab_arp, int
 		}
 	}
 	else {
-		assert(0);
+		actualizar_tabla_arp(tabla_arp, cab_arp, interface);
 	}
 }
 
@@ -409,7 +408,7 @@ void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char
 	/*PASO 2: preparar mensaje broadcast ARP*/
 	cab_arp_t *cab_arp = (cab_arp_t *) cab_ethernet->payload;
 	cab_arp->tipo_hw = 1;
-	cab_arp->tipo_proto = 0x0800;
+	cab_arp->tipo_proto = IPv4;
 	cab_arp->lon_dir_hw = sizeof(dir_mac_t);
 	cab_arp->lon_dir_proto = 4;
 	cab_arp->cod_op = SOLIC_BROAD_ARP;
