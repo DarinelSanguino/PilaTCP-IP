@@ -163,8 +163,9 @@ void recibir_paquete_ip_en_capa3(nodo_t *nodo_rec, interface_t *interface_rec, c
 				break;
 		}
 		return;
-	}	
-	bajar_paquete_a_capa2(nodo_rec, NULL, cabecera_ip->ip_destino, paquete, tamano_paq, IPv4);
+	}
+	//AQUI**************
+	bajar_paquete_a_capa2(nodo_rec, "\0", cabecera_ip->ip_destino, paquete, tamano_paq, IPv4);
 }
 
 void _recibir_paquete_de_capa2_a_capa3(nodo_t *nodo_rec, interface_t *interface_rec, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo) {

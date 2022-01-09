@@ -94,14 +94,15 @@ static void _procesamiento_arp_pendiente(nodo_t *nodo, interface_t *intf_salida,
 	memcpy(cab_ethernet->mac_destino.dir_mac, entrada_arp->dir_mac.dir_mac, sizeof(dir_mac_t));
 	memcpy(cab_ethernet->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));
 	enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + entrada_arp_pendiente->tamano_paq, intf_salida);
+	free(cab_ethernet);
 }
 
 static void procesamiento_arp_pendiente(nodo_t *nodo, interface_t *intf_salida, entrada_arp_t *entrada_arp) {
 	ITERAR_LISTA_ENLAZADA(entrada_arp->lista_paq_arp_pendientes) {
 		entrada_arp_pendiente_t *entrada_arp_pendiente = *(entrada_arp_pendiente_t **)(nodo_actual->elemento);
-		_procesamiento_arp_pendiente(nodo, intf_salida, entrada_arp, entrada_arp_pendiente);
-		eliminar(entrada_arp->lista_paq_arp_pendientes, nodo_actual);
+		_procesamiento_arp_pendiente(nodo, intf_salida, entrada_arp, entrada_arp_pendiente);		
 	} FIN_ITERACION;
+	limpiar(entrada_arp->lista_paq_arp_pendientes);
 }
 
 void conf_intf_modo_l2(nodo_t *nodo, char *nombre_if, modo_l2_intf_t modo_l2_intf) {
@@ -126,11 +127,11 @@ void bajar_paquete_a_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_gw, char
 bool rellenar_cab_ethernet(nodo_t *nodo, interface_t *intf_salida, char *ip_destino, cab_ethernet_t *cab_ethernet, unsigned int tamano_paq) {
 	entrada_arp_t *entrada_arp = busqueda_tabla_arp(TABLA_ARP_NODO(nodo), ip_destino);
 	if(!entrada_arp) {
-		enviar_solicitud_broadcast_arp(nodo, intf_salida, ip_destino);
 		entrada_arp = crear_entrada_arp(TABLA_ARP_NODO(nodo), ip_destino, NULL, intf_salida);
 		if(entrada_arp) {
 			agregar_paquete_lista_arp_pendiente(entrada_arp, (char *)cab_ethernet, tamano_paq);
-		}	
+		}
+		enviar_solicitud_broadcast_arp(nodo, intf_salida, ip_destino);
 		return false;
 	}
 	if(!entrada_arp->esta_completa) {
@@ -138,8 +139,7 @@ bool rellenar_cab_ethernet(nodo_t *nodo, interface_t *intf_salida, char *ip_dest
 		return false;
 	}
 	memcpy(cab_ethernet->mac_destino.dir_mac, entrada_arp->dir_mac.dir_mac, sizeof(dir_mac_t));
-	memcpy(cab_ethernet->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));
-	cab_ethernet->tipo = IPv4;
+	memcpy(cab_ethernet->mac_origen.dir_mac, MAC_IF(intf_salida), sizeof(dir_mac_t));	
 	return true;
 }
 
@@ -151,17 +151,19 @@ void recibir_paquete_ip_en_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_de
 	inet_ntop(AF_INET, &ip_destino, dir_ip, TAM_DIR_IP);
 
 	memcpy(cab_ethernet->payload, paquete, tamano_paq);
+	cab_ethernet->tipo = IPv4;
 
 	if(intf_salida[0] != '\0') {
 		interface_t *interface_salida = obtener_intf_por_nombre(nodo, intf_salida);
 		if(interface_salida) {
 			if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet, tamano_paq)) {
 				enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_paq, interface_salida);
+				free(cab_ethernet);
 			}
 		}
 		else {
 			printf("Error: %s: ninguna subred apropiada para el envío del paquete a %s.\n", nodo->nombre_nodo, dir_ip);
-		}	
+		}
 	}
 	else {
 		if(nodo_es_destino(nodo, dir_ip)) {
@@ -172,6 +174,7 @@ void recibir_paquete_ip_en_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_de
 			if(interface_salida) {
 				if(rellenar_cab_ethernet(nodo, interface_salida, dir_ip, cab_ethernet, tamano_paq)) {
 					enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_paq, interface_salida);
+					free(cab_ethernet);
 				}
 			}
 			else {
@@ -179,7 +182,6 @@ void recibir_paquete_ip_en_capa2(nodo_t *nodo, char *intf_salida, uint32_t ip_de
 			}
 		}
 	}
-	free(cab_ethernet);
 }
 
 bool recibir_trama_capa2_en_interface(interface_t *interface, cab_ethernet_t *cab_ethernet, unsigned int tamano_paq, bool *etiqueta_vlan) {
