@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-//#include "Grafico.h"
 
 typedef struct ListaEnlazada Lista_t;
 typedef struct NodoLista NodoLista_t;
@@ -21,11 +20,9 @@ struct ListaEnlazada {
 };
 
 bool insertar(Lista_t *lista, void *elemento, size_t tam_elemento);
-//nodo_t *obtener_elemento(Lista_t *lista, char *nombre_nodo);
 bool lista_vacia(Lista_t *lista);
 void eliminar(Lista_t *lista, NodoLista_t *nodo_lista);
 void limpiar(Lista_t *lista);
-//void recorrer_lista(Lista_t *lista, void (*operacion) (const void *nodo));
 
 #define ITERAR_LISTA_ENLAZADA(lista) {	\
 	NodoLista_t *nodo_actual = lista->nodo_inicio;	\

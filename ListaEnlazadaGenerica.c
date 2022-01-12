@@ -1,14 +1,11 @@
 #include "ListaEnlazadaGenerica.h"
 
-bool insertar(Lista_t *lista, void *elemento, size_t tam_elemento) {
-	//Pendiente**********************************************************************
-	printf("Iniciando insercion.\n");
+bool insertar(Lista_t *lista, void *elemento, size_t tam_elemento) {	
+	//printf("Iniciando insercion.\n");
 	NodoLista_t *nodo_lista = malloc(sizeof(NodoLista_t));
 
-	//ptrNodo nuevoPtr = malloc(sizeof(NodoLista));
 	if(nodo_lista != NULL) {
-		nodo_lista->elemento = malloc(tam_elemento);
-		//nodo_lista->elemento = elemento;
+		nodo_lista->elemento = malloc(tam_elemento);		
 		for(int i = 0; i < tam_elemento; i++) {
 			*((char *) (nodo_lista->elemento + i)) = *((char *) (elemento + i));
 		}
@@ -27,8 +24,7 @@ bool insertar(Lista_t *lista, void *elemento, size_t tam_elemento) {
 	else {
 		printf("Memoria insuficiente.\n");
 		return false;
-	}
-	printf("Finalizando insercion.\n");
+	}	
 }
 
 void eliminar(Lista_t *lista, NodoLista_t *nodo_lista) {
@@ -51,8 +47,7 @@ void eliminar(Lista_t *lista, NodoLista_t *nodo_lista) {
 		}
 		nodo_previo = nodo_actual;
 		nodo_actual = nodo_actual->sig_nodo;
-	}
-	return;
+	}	
 }
 
 void limpiar(Lista_t *lista) {

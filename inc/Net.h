@@ -7,36 +7,7 @@
 #include <assert.h>
 #include "Grafico.h"
 #include "Utiles.h"
-//#include "Net_fwd.h"
-//#include "Capa2_fwd.h"
-//#include "Capa2.h"
-/*#define TAM_DIR_MAC 6
-#define TAM_DIR_IP 16*/
 
-/*#pragma pack(push, 1)
-
-typedef struct dir_ip_ {
-	char dir_ip[TAM_DIR_IP];
-} dir_ip_t;
-
-typedef struct dir_mac_ {
-	char dir_mac[TAM_DIR_MAC];
-} dir_mac_t;
-
-#pragma pack (pop)
-
-struct prop_nodo_ {
-	bool tiene_dir_loopback;
-	dir_ip_t dir_loopback;
-	tabla_arp_t *tabla_arp;
-};
-
-struct prop_intf_ {
-	bool tiene_dir_ip;
-	dir_ip_t dir_ip;
-	dir_mac_t dir_mac;
-	char mascara;
-};*/
 extern void inic_tabla_arp(tabla_arp_t **tabla_arp);
 extern void inic_tabla_mac(tabla_mac_t **tabla_mac);
 extern void inic_tabla_ruteo(tabla_ruteo_t **tabla_ruteo);
@@ -67,9 +38,6 @@ bool quitar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if);
 void asignar_dir_mac(interface_t *interface);
 char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_total_buf);
 void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred);
-//void mostrar_prop_intf(const prop_intf_t *prop_intf);
-//void mostrar_dir_ip(const dir_ip_t *dir_ip);
-//void mostrar_dir_mac(const dir_mac_t *dir_mac);
 
 #define MAC_IF(ptr_if) ptr_if->prop_intf->dir_mac.dir_mac
 #define IP_IF(ptr_if) ptr_if->prop_intf->dir_ip.dir_ip

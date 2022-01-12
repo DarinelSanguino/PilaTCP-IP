@@ -12,7 +12,6 @@ uint32_t dir_ip_p_a_n(char *dir_ip) {
 }
 
 char * dir_ip_n_a_p(uint32_t dir_ip, char *cadena_dir_ip) {
-	/**********************PENDIENTE*****************/
 	dir_ip = htonl(dir_ip);
 	memset(cadena_dir_ip, 0, TAM_DIR_IP);
 	cadena_dir_ip = inet_ntop(AF_INET, &dir_ip, cadena_dir_ip, TAM_DIR_IP);

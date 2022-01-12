@@ -68,7 +68,6 @@ void inicializar_nodo(nodo_t *nodo) {
 	init_prop_nodo(nodo->prop_nodo);
 }
 
-/**********CAMBIO_TEMPORAL***************************/
 nodo_t* obtener_elemento(Lista_t *lista, char *nombre_nodo) {
 	ITERAR_LISTA_ENLAZADA(lista) {
 		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
@@ -87,13 +86,9 @@ void inicializar_grafico(grafico_t *grafico) {
 
 void mostrar_grafico(const grafico_t *grafico) {
 	printf("%s\n", grafico->nombre_topologia);
-	//nodo_t *primero = *(nodo_t **)(grafico->lista_nodos->nodo_inicio->elemento);	
-	//printf("Nodo primero: %s", primero->nombre_nodo);
-	//recorrer_lista(grafico->lista_nodos, mostrar_nodo);
+	
 	ITERAR_LISTA_ENLAZADA(grafico->lista_nodos) {
-		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
-		//printf("Nodo primero otra vez: %s", primero->nombre_nodo);
-		//printf("Nodo %s", nodo_red->nombre_nodo);
+		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);		
 		mostrar_nodo(nodo_red);
 	} FIN_ITERACION;
 }
@@ -112,23 +107,18 @@ void mostrar_nodo(const nodo_t *nodo) {
 }
 
 void mostrar_interface(const interface_t *interface) {
-	printf("Interface %s: \n", interface->nombre_if);
-	//printf("dirección IP %s/%i ", interface->prop_intf->dir_ip.dir_ip, interface->prop_intf->mascara);
-	//printf("dirección MAC %s\n", interface->prop_intf->dir_mac.dir_mac);
-	//mostrar_dir_mac(&interface->prop_intf->dir_mac);
+	printf("Interface %s: \n", interface->nombre_if);	
 	mostrar_enlace(interface->enlace);
 	mostrar_prop_intf(interface->prop_intf);
 	
 }
 
 void mostrar_enlace(const enlace_t *enlace) {
-	printf("Enlace entre nodos %s y %s, costo %u\n", enlace->intf1.nombre_if, enlace->intf2.nombre_if, enlace->costo);
+	printf("Enlace entre nodos %s y %s, costo %u.\n", enlace->intf1.nombre_if, enlace->intf2.nombre_if, enlace->costo);
 }
 
-void mostrar_prop_intf(const prop_intf_t *prop_intf) {
-	/**************CAMBIO_TEMPORAL******************/
+void mostrar_prop_intf(const prop_intf_t *prop_intf) {	
 	printf("Dirección IP %s/%i\n", prop_intf->dir_ip.dir_ip, prop_intf->mascara);
-	//printf("Dirección MAC %s\n", prop_intf->dir_mac.dir_mac);
 	mostrar_dir_mac(&prop_intf->dir_mac);
 	mostrar_prop_vlan(prop_intf->modo_l2_intf, prop_intf->vlans);
 }
@@ -142,14 +132,12 @@ void mostrar_dir_mac(const dir_mac_t *dir_mac) {
 }
 
 interface_t* obtener_intf_correspondiente_a_nodo(nodo_t *nodo, char *dir_ip) {
-	printf("%s\n", __FUNCTION__);
 	interface_t *interface_actual = NULL;
 	char *dir_ip_local;
 	char mascara;
 	char subred_dir_ip_local[TAM_DIR_IP];
 	char subred_dir_ip[TAM_DIR_IP];
 	for(int i = 0; i < MAX_INTF_POR_NODO; ++i) {
-		printf("i: %i.\n", i);
 		interface_actual = nodo->intf[i];
 		if(!interface_actual) return NULL;		
 		dir_ip_local = IP_IF(interface_actual);
@@ -157,7 +145,6 @@ interface_t* obtener_intf_correspondiente_a_nodo(nodo_t *nodo, char *dir_ip) {
 		aplicar_mascara(dir_ip_local, mascara, subred_dir_ip_local);
 		aplicar_mascara(dir_ip, mascara, subred_dir_ip);
 		if(strncmp(subred_dir_ip, subred_dir_ip_local, TAM_DIR_IP) == 0) {
-			printf("Se encontró la subred.\n");
 			return interface_actual;
 		}
 	}

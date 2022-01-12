@@ -3,8 +3,8 @@
 grafico_t * const_primera_topologia() {
 	grafico_t *primer_grafico = crear_nuevo_grafico("Grafico Hola Mundo");
 	nodo_t *nodo_R0 = crear_nodo_grafico(primer_grafico, "R0");
-	printf("Grafico despues de la primera insercion.\n");
-	mostrar_grafico(primer_grafico);
+	//printf("Grafico despues de la primera insercion.\n");
+	//mostrar_grafico(primer_grafico);
 	nodo_t *nodo_R1 = crear_nodo_grafico(primer_grafico, "R1");
 	nodo_t *nodo_R2 = crear_nodo_grafico(primer_grafico, "R2");
 

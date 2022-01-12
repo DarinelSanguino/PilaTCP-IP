@@ -92,7 +92,7 @@ void eliminar_entrada_tabla_ruteo(tabla_ruteo_t *tabla_ruteo, char *dir_ip, char
 void mostrar_tabla_ruteo(tabla_ruteo_t *tabla_ruteo) {
 	ITERAR_LISTA_ENLAZADA(tabla_ruteo->lista_rutas) {
 		ruta_l3_t *ruta_l3 = *(ruta_l3_t **)(nodo_actual->elemento);		
-		printf("Destino: %s, mascara:%u, local: %s, ip gateway: %s, interface de salida: %s.\n", 
+		printf("Destino: %s, mascara:%u, local: %s, ip gateway: %s, interface de salida: %s\n", 
 			ruta_l3->destino,
 			ruta_l3->mascara,
 			ruta_l3->es_local ? "true" : "false",
@@ -107,7 +107,7 @@ void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int 
 	inet_ntop(AF_INET, &ip_destino, dir_ip, TAM_DIR_IP);
 	ruta_l3_t *ruta_l3 = busqueda_tabla_ruteo(nodo->prop_nodo->tabla_ruteo, dir_ip);
 	if(!ruta_l3) {
-		printf("No se encontró alguna entrada coincidente con la dirección IP %s.\n", dir_ip);
+		printf("No se encontró alguna entrada coincidente con la dirección IP %s en la tabla del nodo %s.\n", dir_ip, nodo->nombre_nodo);
 		return;
 	}
 	char *nuevo_ptr_paq = calloc(1, sizeof(cabecera_ip_t) + tamano_datos);
@@ -140,7 +140,7 @@ void recibir_paquete_ip_en_capa3(nodo_t *nodo_rec, interface_t *interface_rec, c
 	inet_ntop(AF_INET, &cabecera_ip->ip_destino, ip_destino, TAM_DIR_IP);
 	ruta_l3_t *ruta_l3 = busqueda_tabla_ruteo(nodo_rec->prop_nodo->tabla_ruteo, ip_destino);
 	if(!ruta_l3) {
-		printf("No se encontró alguna entrada coincidente con la dirección IP %s.\n", ip_destino);
+		printf("No se encontró alguna entrada coincidente con la dirección IP %s en la tabla del nodo %s.\n", ip_destino, nodo_rec->nombre_nodo);
 		return;
 	}
 	if(!ruta_l3->es_local) {
@@ -163,8 +163,7 @@ void recibir_paquete_ip_en_capa3(nodo_t *nodo_rec, interface_t *interface_rec, c
 				break;
 		}
 		return;
-	}
-	//AQUI**************
+	}	
 	bajar_paquete_a_capa2(nodo_rec, "\0", cabecera_ip->ip_destino, paquete, tamano_paq, IPv4);
 }
 

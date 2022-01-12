@@ -4,43 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ListaEnlazadaGenerica.h"
-//#include "Grafico_fwd.h"
-//#include "Net_fwd.h"
-//#include "Com.h"
 #include "Tipos_red.h"
 #include "Net.h"
-
-// #define TAM_NOMBRE_NODO 16
-// #define TAM_NOMBRE_IF 16
-// #define MAX_INTF_POR_NODO 10
-// #define MAX_NODOS_POR_GRAFICO 256
-// #define TAM_DIR_MAC 6
-
-/*struct interface_ {
-	char nombre_if[TAM_NOMBRE_IF];
-	struct nodo_ *nodo_padre;
-	struct enlace_ *enlace;
-	prop_intf_t *prop_intf;
-};
-
-struct enlace_ {
-	interface_t intf1;
-	interface_t intf2;
-	unsigned int costo;
-};
-
-struct nodo_ {
-	char nombre_nodo[TAM_NOMBRE_NODO];
-	interface_t *intf[MAX_INTF_POR_NODO];
-	prop_nodo_t *prop_nodo;
-	unsigned int numero_puerto_udp;
-	int fd_sock_udp;
-};
-
-struct grafico_ {
-	char nombre_topologia[32];
-	Lista_t *lista_nodos;
-};*/
 
 grafico_t * crear_nuevo_grafico(const char *nombre_topologia);
 nodo_t * crear_nodo_grafico(grafico_t *grafico, const char *nombre_nodo);
@@ -65,8 +30,7 @@ static inline nodo_t* obtener_nodo_vecino(interface_t *interface) {
 
 static inline int obtener_ranura_intf_disp(nodo_t *nodo) {
 	for (int i = 0; i < MAX_INTF_POR_NODO; ++i)
-	{
-		/* code */
+	{		
 		if (nodo->intf[i] == NULL) return i;		
 	}
 	return -1;

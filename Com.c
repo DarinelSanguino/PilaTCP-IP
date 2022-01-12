@@ -1,6 +1,6 @@
 #include "Com.h"
 
-extern int errno ;
+extern int errno;
 
 static unsigned int numero_puerto_udp = 40000;
 static char buffer_rec[MAX_TAMANO_BUFFER_PAQ];
@@ -11,8 +11,7 @@ static unsigned int get_next_udp_port_number() {
 }
 
 static void _recibir_paquete(nodo_t *nodo_rec, char *paquete_con_datos_aux, unsigned int tamano_paq) {
-	char *nombre_if = paquete_con_datos_aux;
-	//printf("%s", nombre_if);
+	char *nombre_if = paquete_con_datos_aux;	
 	interface_t *intf_destino = obtener_intf_por_nombre(nodo_rec, nombre_if);
 	if(!intf_destino) {
 		printf("Paquete recibido en interface desconocida %s del nodo %s\n.", nombre_if, nodo_rec->nombre_nodo);
@@ -23,14 +22,9 @@ static void _recibir_paquete(nodo_t *nodo_rec, char *paquete_con_datos_aux, unsi
 }
 
 int recibir_paquete(nodo_t *nodo_rec, interface_t *interface, char *paquete, unsigned int tamano_paq, char *inicio) {
-	/***********PENDIENTE: ver si inicio es necesaria**********/
-	printf("El mensaje recibido es %s\n", paquete);
-	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
-	printf("El tamaño del paquete es %u bytes.\n", tamano_paq);
+	printf("El tamaño del paquete recibido en %s es %u bytes.\n", nodo_rec->nombre_nodo, tamano_paq);
 	//MAX_TAMANO_BUFFER_PAQ - TAM_NOMBRE_IF es el espacio que queda disponible considerando el espacio que ocupa la información de la interface.
-	paquete = desp_der_buf_paq(paquete, tamano_paq, MAX_TAMANO_BUFFER_PAQ - TAM_NOMBRE_IF);
-	printf("El paquete después del desplazamiento es %s\n", paquete);
-	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
+	paquete = desp_der_buf_paq(paquete, tamano_paq, MAX_TAMANO_BUFFER_PAQ - TAM_NOMBRE_IF);	
 	recibir_trama_capa2(nodo_rec, interface, paquete, tamano_paq);
 	return 0;
 }
@@ -42,28 +36,10 @@ static void revisar_set_fd(Lista_t *lista, fd_set *set_fd_sock) {
 		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
 		if(FD_ISSET(nodo_red->fd_sock_udp, set_fd_sock)) {
 			memset(buffer_rec, 0, MAX_TAMANO_BUFFER_PAQ);
-			//**********************************PENDIENTE**********************************************
 			int bytes_rec = recvfrom(nodo_red->fd_sock_udp, buffer_rec, MAX_TAMANO_BUFFER_PAQ, 0, (struct sockaddr *) &dir_transmisor, &long_dir);
 			_recibir_paquete(nodo_red, buffer_rec, bytes_rec + 1);
 		}
 	} FIN_ITERACION;
-	/*if(lista_vacia(lista)) {
-	return;
-	}
-	NodoLista_t *nodo_actual = lista->nodo_inicio;
-	nodo_t *nodo_red = NULL;
-	struct sockaddr_in dir_transmisor;
-	int long_dir = sizeof(struct sockaddr);
-	while(nodo_actual != NULL) {
-		nodo_red = nodo_actual->nodo;
-		if(FD_ISSET(nodo_red->fd_sock_udp, set_fd_sock)) {
-			memset(buffer_rec, 0, MAX_TAMANO_BUFFER_PAQ);
-			//**********************************PENDIENTE**********************************************
-			int bytes_rec = recvfrom(nodo_red->fd_sock_udp, buffer_rec, MAX_TAMANO_BUFFER_PAQ, 0, (struct sockaddr *) &dir_transmisor, &long_dir);
-			_recibir_paquete(nodo_red, buffer_rec, bytes_rec + 1);
-		}
-		nodo_actual = nodo_actual->sig_nodo;
-	}*/
 }
 
 static void agregar_set_fd(Lista_t *lista, fd_set *set_fd_sock, int *max_sock_fd) {
@@ -76,22 +52,6 @@ static void agregar_set_fd(Lista_t *lista, fd_set *set_fd_sock, int *max_sock_fd
 		}
 		FD_SET(nodo_red->fd_sock_udp, set_fd_sock);
 	} FIN_ITERACION;
-	/****************CAMBIO_TEMPORAL***************/
-	/*if(lista_vacia(lista)) {
-		return;
-	}
-	NodoLista_t *nodo_actual = lista->nodo_inicio;
-	nodo_t *nodo_red = NULL;
-	while(nodo_actual != NULL) {
-		nodo_red = nodo_actual->nodo;
-		if(!nodo_red->fd_sock_udp) continue;
-
-		if(nodo_red->fd_sock_udp > *max_sock_fd) {
-			*max_sock_fd = nodo_red->fd_sock_udp;
-		}
-		FD_SET(nodo_red->fd_sock_udp, set_fd_sock);
-		nodo_actual = nodo_actual->sig_nodo;
-	}*/
 }
 
 static void * _iniciar_hilo_receptor_de_red(void *arg) {
@@ -99,13 +59,10 @@ static void * _iniciar_hilo_receptor_de_red(void *arg) {
 
 	int max_sock_fd = 0;
 
-	grafico_t *topo = (void *)arg;
-	//int long_dir = sizeof(struct sockaddr);
+	grafico_t *topo = (void *)arg;	
 
 	FD_ZERO(&fd_set_sock_activo);
 	FD_ZERO(&fd_set_sock_respaldo);
-
-	//struct sockaddr_in dir_transmisor;
 
 	agregar_set_fd(topo->lista_nodos, &fd_set_sock_respaldo, &max_sock_fd);
 
@@ -131,14 +88,13 @@ int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_ori
 	int rc = 0;
 	nodo_t *nodo_origen = intf_origen->nodo_padre;
 	nodo_t *nodo_destino = obtener_nodo_vecino(intf_origen);
-	printf("Nodo de destino: %s\n", nodo_destino->nombre_nodo);
-	//int fd_sock_udp = nodo_origen->fd_sock_udp;
+	//printf("Nodo de destino: %s.\n", nodo_destino->nombre_nodo);	
 	if(!nodo_destino) return -1;
 
 	unsigned int puerto_udp_destino = nodo_destino->numero_puerto_udp;
 	int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if(sock < 0) {
-		printf("Error en la creación del socket de envío");
+		printf("Error en la creación del socket de envío.\n");
 		return -1;
 	}
 	
@@ -148,21 +104,10 @@ int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_ori
 	strncpy(paquete_con_datos_aux, intf_destino->nombre_if, TAM_NOMBRE_IF);
 	paquete_con_datos_aux[TAM_NOMBRE_IF] = '\0';
 	memcpy(paquete_con_datos_aux + TAM_NOMBRE_IF, paquete, tamano_paq);
-	//Aquí se hace la primera verificación
-	//cab_ethernet_t *cab_ethernet = (cab_ethernet_t *) paquete;
 	rc = _enviar_paquete(sock, paquete_con_datos_aux, tamano_paq + TAM_NOMBRE_IF, puerto_udp_destino);
 	close(sock);
 	return rc;
 }
-
-/*void agregar_fd(fd_set *set_fd_sock, nodo_t *nodo, int *max_sock_fd) {
-	if(!nodo->fd_sock_udp) return;
-
-	if(nodo->fd_sock_udp > &max_sock_fd) {
-		&max_sock_fd = nodo->fd_sock_udp;
-	}
-	FD_SET(nodo->fd_sock_udp, &set_fd_sock);
-}*/
 
 void inic_sock_udp(nodo_t *nodo) {
 	int errnum;
@@ -170,7 +115,7 @@ void inic_sock_udp(nodo_t *nodo) {
 	printf("%s: %u\n", nodo->nombre_nodo, nodo->numero_puerto_udp);
 	int fd_sock_udp = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if(fd_sock_udp == -1) {
-		printf("Creación fallida del socket con número de puerto %u\n", nodo->numero_puerto_udp);
+		printf("Creación fallida del socket con número de puerto %u.\n", nodo->numero_puerto_udp);
 		return;
 	}
 
@@ -183,7 +128,7 @@ void inic_sock_udp(nodo_t *nodo) {
 		fprintf(stderr, "Value of errno: %d\n", errno);
 		perror("Error printed by perror");
 		fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
-		printf("Error: anexión de socket %u fallida para el nodo %s\n", fd_sock_udp, nodo->nombre_nodo);
+		printf("Error: anexión de socket %u fallida para el nodo %s.\n", fd_sock_udp, nodo->nombre_nodo);
 		return;
 	}
 	nodo->fd_sock_udp = fd_sock_udp;

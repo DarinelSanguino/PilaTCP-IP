@@ -51,9 +51,7 @@ bool quitar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if) {
 void asignar_dir_mac(interface_t *interface) {
 	nodo_t *nodo = interface->nodo_padre;
 	unsigned int codigo_hash = obtener_cod_hash(nodo->nombre_nodo, TAM_NOMBRE_NODO);
-	codigo_hash *= obtener_cod_hash(interface->nombre_if, TAM_NOMBRE_IF);
-	//char *cod_hash;
-	//itoa(codigo_hash, cod_hash, 10);
+	codigo_hash *= obtener_cod_hash(interface->nombre_if, TAM_NOMBRE_IF);	
 	memset(MAC_IF(interface), 0, sizeof(MAC_IF(interface)));
 	memcpy(MAC_IF(interface), (char *)&codigo_hash, sizeof(unsigned int));
 }
@@ -64,11 +62,9 @@ char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_to
 	char *nueva_dir_paq = dir_fin_paq - tam_paq;
 	char temp[tam_paq];
 	memset(temp, 0, tam_paq);
-	memcpy(temp, paquete, tam_paq);
-	printf("temp es %s\n", temp);
+	memcpy(temp, paquete, tam_paq);	
 	memset(paquete, 0, tam_total_buf);
-	memcpy(nueva_dir_paq, temp, tam_paq);
-	printf("nueva_dir_paq es %s\n", nueva_dir_paq);
+	memcpy(nueva_dir_paq, temp, tam_paq);	
 	return nueva_dir_paq;
 }
 
@@ -78,20 +74,12 @@ void aplicar_mascara(char *dir_ip, char mascara, char *dir_ip_subred) {
 	mascara_temp = mascara_temp << (32 - mascara);
 	
 	inet_pton(AF_INET, dir_ip, &ip_temp);
-	ip_temp = htonl(ip_temp);
-	printf("ip_temp %u.\n", ip_temp);
+	ip_temp = htonl(ip_temp);	
 	
-	uint32_t ip = ip_temp & mascara_temp;
-	printf("ip %u.\n", ip);
+	uint32_t ip = ip_temp & mascara_temp;	
 	ip = htonl(ip);
 	inet_ntop(AF_INET, &ip, dir_ip_subred, TAM_DIR_IP);
 	dir_ip_subred[TAM_DIR_IP - 1] = '\0';
 	
-	printf("Dir IP: %s. Mascara: %hu.\n", dir_ip_subred, mascara);
+	//printf("Dir IP: %s. Mascara: %hu.\n", dir_ip_subred, mascara);
 }
-
-/*void mostrar_prop_intf(const prop_intf_t *prop_intf) {
-	
-	printf("Dirección IP %s/%i\n", prop_intf->dir_ip.dir_ip, prop_intf->mascara);
-	printf("Dirección MAC %s\n", prop_intf->dir_mac.dir_mac);
-}*/
