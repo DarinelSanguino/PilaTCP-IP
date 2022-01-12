@@ -2,8 +2,8 @@
 
 extern bool tabla_ruteo_agregar_ruta_local(tabla_ruteo_t *tabla_ruteo, char *destino, char mascara);
 
-static unsigned int obtener_cod_hash(void *ptr, unsigned int tamano) {
-	unsigned int valor = 0, i = 0;
+static unsigned long obtener_cod_hash(void *ptr, unsigned int tamano) {
+	unsigned long valor = 0, i = 0;
 	char *str = (char *) ptr;
 	while(i < tamano) {
 		valor += *str;
@@ -50,10 +50,10 @@ bool quitar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if) {
 
 void asignar_dir_mac(interface_t *interface) {
 	nodo_t *nodo = interface->nodo_padre;
-	unsigned int codigo_hash = obtener_cod_hash(nodo->nombre_nodo, TAM_NOMBRE_NODO);
+	unsigned long codigo_hash = obtener_cod_hash(nodo->nombre_nodo, TAM_NOMBRE_NODO);
 	codigo_hash *= obtener_cod_hash(interface->nombre_if, TAM_NOMBRE_IF);	
 	memset(MAC_IF(interface), 0, sizeof(MAC_IF(interface)));
-	memcpy(MAC_IF(interface), (char *)&codigo_hash, sizeof(unsigned int));
+	memcpy(MAC_IF(interface), (char *)&codigo_hash, TAM_DIR_MAC);
 }
 
 char * desp_der_buf_paq(char *paquete, unsigned int tam_paq, unsigned int tam_total_buf) {
