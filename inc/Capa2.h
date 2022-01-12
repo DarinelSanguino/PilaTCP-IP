@@ -28,7 +28,7 @@ struct cab_arp_ {
 struct cab_ethernet_ {
 	dir_mac_t mac_destino;
 	dir_mac_t mac_origen;
-	short tipo;
+	unsigned short tipo;
 	char payload[TAM_MAX_PAYLOAD];
 	unsigned int FCS;
 };
