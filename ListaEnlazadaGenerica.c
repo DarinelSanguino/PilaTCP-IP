@@ -37,17 +37,17 @@ void eliminar(Lista_t *lista, NodoLista_t *nodo_lista) {
 			}
 			if(nodo_previo == NULL) {
 				lista->nodo_inicio = nodo_actual->sig_nodo;
-				lista->vacia = true;
+				lista->vacia = lista->nodo_inicio == NULL ? true : false;			
 			}
 			else {
-				nodo_previo->sig_nodo = nodo_actual->sig_nodo;
+				nodo_previo->sig_nodo = nodo_actual->sig_nodo;				
 			}
 			free(nodo_actual);
 			return;
 		}
 		nodo_previo = nodo_actual;
 		nodo_actual = nodo_actual->sig_nodo;
-	}	
+	}
 }
 
 void limpiar(Lista_t *lista) {

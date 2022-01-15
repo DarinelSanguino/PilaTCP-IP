@@ -740,3 +740,31 @@ show nodo SW1C2 mac
 run nodo H0 ping 10.1.1.2
 run nodo H0 resolver-arp 10.1.1.2
 run nodo H0 ping 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+show nodo SW1C2 mac
+show nodo SW2C2 mac
+run nodo H0 ping 10.1.1.2
+run nodo H1 ping 10.1.1.1
+run nodo H3 ping 10.1.1.4
+run nodo H3 ping 122.1.1.4
+show nodo H0 arp
+run nodo H4 ping 10.1.1.1
+show nodo H4 arp
+show nodo H0 arp
+show nodo H2 arp
+show nodo H1 arp
+show nodo SW1C2 mac
+show nodo SW2C2 mac
+run nodo H1 ping 10.1.1.5
+show nodo SW1C2 mac
+show nodo H4 arp
+run nodo H1 ping 10.1.1.6
+show nodo H5 arp
+show nodo SW1C2 mac
+show nodo SW2C2 mac
+run nodo H3 ping 10.1.1.3
+run nodo H3 ping 10.1.1.3
+show nodo H3 arp
+show nodo H4 arp
+show nodo H2 arp
+show nodo SW1C2 mac
