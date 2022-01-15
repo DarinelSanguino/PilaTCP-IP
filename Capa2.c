@@ -75,12 +75,12 @@ static void procesar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_ent
 	memset(ip_destino, 0, TAM_DIR_IP);
 	inet_ntop(AF_INET, &ip_destino_arp, ip_destino, TAM_DIR_IP);
 	ip_destino[TAM_DIR_IP - 1] = '\0';
+	actualizar_tabla_arp(TABLA_ARP_NODO(nodo), cab_arp, intf_entrada);
 	if(strncmp(intf_entrada->prop_intf->dir_ip.dir_ip, ip_destino, TAM_DIR_IP) != 0) {
 		printf("%s: solicitud broadcast ARP descartada. La IP de destino %s no coincide con la IP %s de la interface.\n",
 			nodo->nombre_nodo, ip_destino, IP_IF(intf_entrada));
 		return;
 	}
-	actualizar_tabla_arp(TABLA_ARP_NODO(nodo), cab_arp, intf_entrada);
 	enviar_mensaje_arp_respuesta(cab_ethernet, intf_entrada);
 }
 

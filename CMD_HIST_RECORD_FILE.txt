@@ -768,3 +768,10 @@ show nodo H3 arp
 show nodo H4 arp
 show nodo H2 arp
 show nodo SW1C2 mac
+run nodo H0 resolver-arp 10.1.1.1
+show nodo H1 arp
+show nodo H4 arp
+show nodo H5 arp
+show nodo H0 arp
+show nodo H3 arp
+run nodo H0 resolver-arp 11.1.1.1
