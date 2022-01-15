@@ -35,7 +35,7 @@ bool enviar_paquete_switch_capa2(interface_t *intf_salida, char *paquete, unsign
 		if(cab_vlan_8021q) {
 			return vlan_esta_asignada_a_interface_troncal(intf_salida, (short) cab_vlan_8021q->VID);
 		}
-		else return false;	
+		else return false;
 	}
 	return false;
 }

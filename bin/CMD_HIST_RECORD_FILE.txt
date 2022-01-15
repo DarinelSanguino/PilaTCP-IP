@@ -1,0 +1,14 @@
+run nodo H2 ping 10.1.1.4
+config nodo H2 ruta 122.1.1.4 32 10.1.1.4 ethR2/0
+show nodo H0 tabla-ruteo
+show nodo H2 tabla-ruteo
+run nodo H2 ping 122.1.1.4
+run nodo H4 ping 122.1.1.3
+config nodo H3 ruta 122.1.1.1 32 10.1.1.1 ethR3/0
+show nodo H3 tabla-ruteo
+run nodo H3 resolver-arp 10.1.1.1
+run nodo H3 ping 10.1.1.1
+run nodo H3 ping 10.1.1.2
+run nodo H3 ping 10.1.1.2
+run nodo H3 ping 10.1.1.2
+run nodo H3 ping 10.1.1.3

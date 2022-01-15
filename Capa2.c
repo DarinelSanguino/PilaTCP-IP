@@ -195,26 +195,37 @@ bool recibir_trama_capa2_en_interface(interface_t *interface, cab_ethernet_t *ca
 	}
 	if(MODO_L2_IF(interface) == ACCESO) {
 		unsigned int vlan = interface->prop_intf->vlans[0];
+		if(vlan == -1) {
+			printf("Error: la interface %s está configurada en modo ACCESO pero no tiene una VLAN asignada.\n", interface->nombre_if);
+			return false;
+		}
 		if(cab_vlan_8021q) {
-			if(vlan == -1) return false;
+			printf("Error: paquete con etiqueta VLAN recibido en interface %s configurada en modo ACCESO.\n", interface->nombre_if);
+			assert(0);
+			/*if(vlan == -1) return false;
 			else {
 				if(vlan == (short) cab_vlan_8021q->VID) return true;
 				else return false;
-			}
+			}*/
 		}
 		else {
-			if(vlan == -1) return true;
-			else {				
+			*etiqueta_vlan = true;
+			return true;
+			/*if(vlan == -1) return true;
+			else {
 				*etiqueta_vlan = true;
 				return true;
-			}
+			}*/
 		}
 	}
 	if(MODO_L2_IF(interface) == TRONCAL) {		
 		if(cab_vlan_8021q) {
 			return vlan_esta_asignada_a_interface_troncal(interface, (short) cab_vlan_8021q->VID);
 		}
-		else return false;		
+		else {
+			printf("Error: paquete sin etiqueta VLAN recibido en interface %s configurada en modo TRONCAL.\n", interface->nombre_if);
+			return false;
+		}		
 	}	
 	return false;
 }
@@ -605,9 +616,14 @@ bool vlan_esta_asignada_a_interface_troncal(interface_t *interface, unsigned int
 	if(MODO_L2_IF(interface) == TRONCAL) {
 		unsigned int *vlans = VLANS_IF(interface);
 		for(int i = 0; i < MAX_VLANS_POR_INTF; i++) {
-			if(vlans[i] == -1) return false;
+			if(vlans[i] == -1) break;
 			else if(vlans[i] == vlan) return true;
 		}
+		printf("Error: la interface %s configurada como TRONCAL no tiene la VLAN %u asignada.\n", interface->nombre_if, vlan);
+		return false;
 	}
-	return false;
+	else {
+		printf("Error: la interface %s no está configurada en modo TRONCAL.\n", interface->nombre_if);
+		return false;
+	}	
 }
