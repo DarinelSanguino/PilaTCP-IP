@@ -12,25 +12,8 @@ extern void inic_tabla_arp(tabla_arp_t **tabla_arp);
 extern void inic_tabla_mac(tabla_mac_t **tabla_mac);
 extern void inic_tabla_ruteo(tabla_ruteo_t **tabla_ruteo);
 
-static inline void init_prop_nodo(prop_nodo_t *prop_nodo) {
-	prop_nodo->tiene_dir_loopback = false;
-	memset(prop_nodo->dir_loopback.dir_ip, 0, TAM_DIR_IP);
-	inic_tabla_arp(&prop_nodo->tabla_arp);
-	inic_tabla_mac(&prop_nodo->tabla_mac);
-	inic_tabla_ruteo(&prop_nodo->tabla_ruteo);
-}
-
-static inline void init_prop_intf(prop_intf_t *prop_intf) {
-	memset(prop_intf->dir_mac.dir_mac, 0, TAM_DIR_MAC);
-	prop_intf->modo_l2_intf = DESCONOCIDO;
-	for(int i = 0; i < MAX_VLANS_POR_INTF; i++) {
-		prop_intf->vlans[i] = -1;
-	}
-	prop_intf->tiene_dir_ip = false;
-	prop_intf->mascara = 0;
-	memset(prop_intf->dir_ip.dir_ip, 0, TAM_DIR_IP);
-}
-
+void init_prop_nodo(prop_nodo_t *prop_nodo);
+void init_prop_intf(prop_intf_t *prop_intf);
 char * cadena_modo_l2_intf(modo_l2_intf_t modo_l2_intf);
 bool asignar_dir_loopback_nodo(nodo_t *nodo, char *dir_loopback);
 bool asignar_dir_ip_intf_nodo(nodo_t *nodo, char *nombre_if, char *dir_ip, char mascara);

@@ -3,6 +3,34 @@
 extern void inic_sock_udp(nodo_t *nodo);
 extern void mostrar_prop_vlan(modo_l2_intf_t modo_l2_intf, const unsigned int *vlans);
 
+static inline int obtener_ranura_intf_disp(nodo_t *nodo) {
+	for (int i = 0; i < MAX_INTF_POR_NODO; ++i)
+	{		
+		if (nodo->intf[i] == NULL) return i;		
+	}
+	return -1;
+}
+
+nodo_t* obtener_nodo_vecino(interface_t *interface) {
+	interface_t *intf_vecina = &interface->enlace->intf1 == interface ? &interface->enlace->intf2 : &interface->enlace->intf1;
+	return intf_vecina->nodo_padre;
+}
+
+nodo_t * obtener_nodo_por_nombre(grafico_t *topologia, char *nombre_nodo) {
+	return obtener_elemento(topologia->lista_nodos, nombre_nodo);
+}
+
+interface_t * obtener_intf_por_nombre(nodo_t *nodo, char *nombre_if) {
+	for (int i = 0; i < MAX_INTF_POR_NODO; ++i)
+	{
+		if(!nodo->intf[i]) return NULL;
+		if(strncmp(nodo->intf[i]->nombre_if, nombre_if, TAM_NOMBRE_IF) == 0) {
+			return nodo->intf[i];
+		}
+	}
+	return NULL;
+}
+
 grafico_t * crear_nuevo_grafico(const char *nombre_topologia) {
 	grafico_t *grafico = malloc(sizeof(grafico_t));
 	inicializar_grafico(grafico);

@@ -1,0 +1,2 @@
+run nodo H5 resolver-arp 10.1.1.1
+show nodo H5 arp
