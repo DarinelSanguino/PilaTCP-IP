@@ -62,7 +62,7 @@ static void enviar_mensaje_arp_respuesta(cab_ethernet_t *cab_ethernet_entrada, i
 	memcpy(cab_arp_resp->mac_destino.dir_mac, cab_arp_entrada->mac_origen.dir_mac, TAM_DIR_MAC);
 	cab_arp_resp->ip_destino = cab_arp_entrada->ip_origen;
 	FCS_ETH(cab_ethernet_resp, sizeof(cab_arp_t)) = 0;
-	
+	printf("Tamaño del paquete enviado desde %s: %lu.\n", intf_salida->nodo_padre->nombre_nodo, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload);
 	enviar_paquete((char *) cab_ethernet_resp, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);
 	free(cab_ethernet_resp);
 }
@@ -423,6 +423,8 @@ void enviar_solicitud_broadcast_arp(nodo_t *nodo, interface_t *intf_salida, char
 	inet_pton(AF_INET, dir_ip, &cab_arp->ip_destino);
 	
 	FCS_ETH(cab_ethernet, sizeof(cab_ethernet_t)) = 0;
+	printf("Tamaño del paquete enviado desde %s: %lu.\n", intf_salida->nodo_padre->nombre_nodo, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload);
+
 	enviar_paquete((char *) cab_ethernet, TAM_CAB_ETH_EXC_PAYLOAD + tamano_payload, intf_salida);	
 	free(cab_ethernet);
 }

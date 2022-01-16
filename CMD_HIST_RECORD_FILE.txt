@@ -775,3 +775,19 @@ show nodo H5 arp
 show nodo H0 arp
 show nodo H3 arp
 run nodo H0 resolver-arp 11.1.1.1
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.1
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H0 ping 10.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+run nodo H0 ping 11.1.1.2
+run nodo H0 ping 11.1.1.2
+run nodo H0 resolver-arp 10.1.1.2
+run nodo H1 resolver-arp 11.1.1.2
+config nodo H0 ruta 11.1.1.1 24 10.1.1.2 ethR0/0
+run nodo H0 ping 11.1.1.2
+run nodo H0 resolver-arp 10.1.1.2

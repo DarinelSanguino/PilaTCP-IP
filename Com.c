@@ -31,13 +31,13 @@ int recibir_paquete(nodo_t *nodo_rec, interface_t *interface, char *paquete, uns
 
 static void revisar_set_fd(Lista_t *lista, fd_set *set_fd_sock) {
 	struct sockaddr_in dir_transmisor;
-	int long_dir = sizeof(struct sockaddr);
+	unsigned int long_dir = sizeof(struct sockaddr);
 	ITERAR_LISTA_ENLAZADA(lista) {
 		nodo_t *nodo_red = *(nodo_t **)(nodo_actual->elemento);
 		if(FD_ISSET(nodo_red->fd_sock_udp, set_fd_sock)) {
 			memset(buffer_rec, 0, MAX_TAMANO_BUFFER_PAQ);
 			int bytes_rec = recvfrom(nodo_red->fd_sock_udp, buffer_rec, MAX_TAMANO_BUFFER_PAQ, 0, (struct sockaddr *) &dir_transmisor, &long_dir);
-			_recibir_paquete(nodo_red, buffer_rec, bytes_rec + 1);
+			_recibir_paquete(nodo_red, buffer_rec, bytes_rec);
 		}
 	} FIN_ITERACION;
 }
@@ -104,6 +104,7 @@ int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_ori
 	strncpy(paquete_con_datos_aux, intf_destino->nombre_if, TAM_NOMBRE_IF);
 	paquete_con_datos_aux[TAM_NOMBRE_IF] = '\0';
 	memcpy(paquete_con_datos_aux + TAM_NOMBRE_IF, paquete, tamano_paq);
+	printf("Tamaño de paquete saliente desde %s: %u.\n", nodo_origen->nombre_nodo, tamano_paq);
 	rc = _enviar_paquete(sock, paquete_con_datos_aux, tamano_paq + TAM_NOMBRE_IF, puerto_udp_destino);
 	close(sock);
 	return rc;
