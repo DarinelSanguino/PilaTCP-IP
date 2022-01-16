@@ -89,7 +89,7 @@ void enviar_trama_switch_capa2(nodo_t *nodo, interface_t *intf_entrada, char *pa
 		if(!etiqueta_vlan) {
 			cab_ethernet = quitar_etiqueta_paquete_con_id_vlan(cab_ethernet, &nuevo_tamano_paq);
 		}
-		enviar_paquete((char *)cab_ethernet, tamano_paq, intf_salida);
+		enviar_paquete((char *)cab_ethernet, nuevo_tamano_paq, intf_salida);
 	}
 }
 
