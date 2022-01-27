@@ -48,11 +48,14 @@ bool tabla_ruteo_agregar_ruta_local(tabla_ruteo_t *tabla_ruteo, char *destino, c
 bool tabla_ruteo_agregar_ruta_remota(tabla_ruteo_t *tabla_ruteo, char *destino, char mascara, char *ip_gw, char *intf_salida);
 void eliminar_entrada_tabla_ruteo(tabla_ruteo_t *tabla_ruteo, char *dir_ip, char mascara);
 void mostrar_tabla_ruteo(tabla_ruteo_t *tabla_ruteo);
+void bajar_paquete_desde_capa3(nodo_t *nodo, unsigned int ip_destino, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo);
 void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int tamano_datos, unsigned int ip_destino, unsigned int num_protocolo);
 void recibir_paquete_ip_en_capa3(nodo_t *nodo_rec, interface_t *interface_rec, char *paquete, unsigned int tamano_paq);
 void _recibir_paquete_de_capa2_a_capa3(nodo_t *nodo_rec, interface_t *interface_rec, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo);
 void subir_paquete_a_capa3(nodo_t *nodo_rec, interface_t *interface_rec, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo);
 void bajar_datos_a_capa3(nodo_t *nodo, char *datos, unsigned int tamano_datos, unsigned int num_protocolo, unsigned int ip_destino);
+void hacer_ping(nodo_t *nodo, char *ip_destino);
+void hacer_ping_con_nodo_intermedio(nodo_t *nodo, char *ip_dest, char *ip_nodo_intermedio);
 bool nodo_es_destino(nodo_t *nodo, char *ip_destino);
 
 #define LONGITUD_EN_BYTES_CAB_IP(ptr_cab_ip) ptr_cab_ip->IHL * 4

@@ -104,7 +104,7 @@ int enviar_paquete(char *paquete, unsigned int tamano_paq, interface_t *intf_ori
 	strncpy(paquete_con_datos_aux, intf_destino->nombre_if, TAM_NOMBRE_IF);
 	paquete_con_datos_aux[TAM_NOMBRE_IF] = '\0';
 	memcpy(paquete_con_datos_aux + TAM_NOMBRE_IF, paquete, tamano_paq);
-	printf("Tamaño de paquete saliente desde %s: %u.\n", nodo_origen->nombre_nodo, tamano_paq);
+	//printf("Tamaño de paquete saliente desde %s: %u bytes.\n", nodo_origen->nombre_nodo, tamano_paq);
 	rc = _enviar_paquete(sock, paquete_con_datos_aux, tamano_paq + TAM_NOMBRE_IF, puerto_udp_destino);
 	close(sock);
 	return rc;

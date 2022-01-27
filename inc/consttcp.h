@@ -8,5 +8,6 @@
 #define BROADCAST_MAC 0xFFFFFFFFFFFF
 #define IPv4 0x0800
 #define ICMP 1
+#define IPenIP 4
 
 #endif

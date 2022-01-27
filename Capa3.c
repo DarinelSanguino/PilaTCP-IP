@@ -101,7 +101,7 @@ void mostrar_tabla_ruteo(tabla_ruteo_t *tabla_ruteo) {
 	} FIN_ITERACION;
 }
 
-void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int tamano_datos, unsigned int ip_destino, unsigned int num_protocolo) {
+void bajar_paquete_desde_capa3(nodo_t *nodo, unsigned int ip_destino, char *paquete, unsigned int tamano_paq, unsigned int num_protocolo) {
 	char dir_ip[TAM_DIR_IP];
 	memset(dir_ip, 0, TAM_DIR_IP);
 	inet_ntop(AF_INET, &ip_destino, dir_ip, TAM_DIR_IP);
@@ -110,6 +110,23 @@ void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int 
 		printf("No se encontró alguna entrada coincidente con la dirección IP %s en la tabla del nodo %s.\n", dir_ip, nodo->nombre_nodo);
 		return;
 	}
+
+	unsigned int ip_gw = ip_destino;
+	if(!ruta_l3->es_local) {
+		inet_pton(AF_INET, ruta_l3->ip_gw, &ip_gw);
+	}
+	bajar_paquete_a_capa2(nodo, ruta_l3->intf_salida, ip_gw, paquete, tamano_paq, IPv4);
+}
+
+void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int tamano_datos, unsigned int ip_destino, unsigned int num_protocolo) {
+	/*char dir_ip[TAM_DIR_IP];
+	memset(dir_ip, 0, TAM_DIR_IP);
+	inet_ntop(AF_INET, &ip_destino, dir_ip, TAM_DIR_IP);
+	ruta_l3_t *ruta_l3 = busqueda_tabla_ruteo(nodo->prop_nodo->tabla_ruteo, dir_ip);
+	if(!ruta_l3) {
+		printf("No se encontró alguna entrada coincidente con la dirección IP %s en la tabla del nodo %s.\n", dir_ip, nodo->nombre_nodo);
+		return;
+	}*/
 	char *nuevo_ptr_paq = calloc(1, sizeof(cabecera_ip_t) + tamano_datos);
 	cabecera_ip_t *cabecera_ip = (cabecera_ip_t *) nuevo_ptr_paq;
 	inic_cabecera_ip(cabecera_ip);	
@@ -124,12 +141,13 @@ void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int 
 	
 	memcpy(nuevo_ptr_paq + sizeof(cabecera_ip_t), datos, tamano_datos);
 	
-	unsigned int ip_gw = ip_destino;	
+	/*unsigned int ip_gw = ip_destino;	
 	if(!ruta_l3->es_local) {
 		inet_pton(AF_INET, ruta_l3->ip_gw, &ip_gw);
-	}
+	}*/
 	
-	bajar_paquete_a_capa2(nodo, ruta_l3->intf_salida, ip_gw, nuevo_ptr_paq, cabecera_ip->longitud_total * 4, IPv4);
+	//bajar_paquete_a_capa2(nodo, ruta_l3->intf_salida, ip_gw, nuevo_ptr_paq, cabecera_ip->longitud_total * 4, IPv4);
+	bajar_paquete_desde_capa3(nodo, ip_destino, nuevo_ptr_paq, cabecera_ip->longitud_total * 4, IPv4);
 	free(nuevo_ptr_paq);
 }
 
@@ -159,6 +177,18 @@ void recibir_paquete_ip_en_capa3(nodo_t *nodo_rec, interface_t *interface_rec, c
 				printf("PING recibido en la dirección %s desde %s.\n", ip_destino, ip_origen);
 			}
 				break;
+			case IPenIP:
+			{
+				cabecera_ip_t *cabecera_ip_interna = (cabecera_ip_t *) (paquete + (cabecera_ip->IHL * 4));
+				unsigned int tamano_paq_interno = (cabecera_ip->longitud_total - cabecera_ip->IHL) * 4;
+				char ip_destino[TAM_DIR_IP];
+				memset(ip_destino, 0, TAM_DIR_IP);
+				inet_ntop(AF_INET, &cabecera_ip_interna->ip_destino, ip_destino, TAM_DIR_IP);
+				printf("Paquete IP en IP recibido en el nodo %s. Enviando a la dirección IP de destino %s del paquete interno.\n", nodo_rec->nombre_nodo, ip_destino);
+				//bajar_paquete_a_capa2(nodo_rec, "\0", cabecera_ip_interna->ip_destino, (char *)cabecera_ip_interna, tamano_paq_interno, IPv4);
+				bajar_paquete_desde_capa3(nodo_rec, cabecera_ip_interna->ip_destino, (char *)cabecera_ip_interna, tamano_paq_interno, IPv4);
+			}
+				break;
 			default:
 				break;
 		}
@@ -183,6 +213,35 @@ void subir_paquete_a_capa3(nodo_t *nodo_rec, interface_t *interface_rec, char *p
 
 void bajar_datos_a_capa3(nodo_t *nodo, char *datos, unsigned int tamano_datos, unsigned int ip_destino, unsigned int num_protocolo) {
 	_recibir_datos_de_capa_sup_a_capa3(nodo, datos, tamano_datos, ip_destino, num_protocolo);
+}
+
+void hacer_ping(nodo_t *nodo, char *ip_destino) {
+	printf("Nodo origen: %s, IP de destino PING: %s.\n", nodo->nombre_nodo, ip_destino);
+	unsigned int ip_dest;
+	inet_pton(AF_INET, ip_destino, &ip_dest);
+	bajar_datos_a_capa3(nodo, NULL, 0, ip_dest, ICMP);
+}
+
+void hacer_ping_con_nodo_intermedio(nodo_t *nodo, char *ip_dest, char *ip_nodo_intermedio) {
+	char *nuevo_ptr_paq = calloc(1, sizeof(cabecera_ip_t));
+	cabecera_ip_t *cabecera_ip = (cabecera_ip_t *) nuevo_ptr_paq;
+	inic_cabecera_ip(cabecera_ip);
+	cabecera_ip->longitud_total = cabecera_ip->IHL;
+	
+	cabecera_ip->protocolo = ICMP;
+	
+	unsigned int ip_origen;
+	inet_pton(AF_INET, DIR_LO_NODO(nodo), &ip_origen);
+	cabecera_ip->ip_origen = ip_origen;
+	
+	unsigned int ip_destino;
+	inet_pton(AF_INET, ip_dest, &ip_destino);
+	cabecera_ip->ip_destino = ip_destino;
+
+	unsigned int dir_ip_intermedia;
+	inet_pton(AF_INET, ip_nodo_intermedio, &dir_ip_intermedia);
+	bajar_datos_a_capa3(nodo, nuevo_ptr_paq, cabecera_ip->longitud_total * 4, dir_ip_intermedia, IPenIP);
+	free(nuevo_ptr_paq);
 }
 
 bool nodo_es_destino(nodo_t *nodo, char *ip_destino) {

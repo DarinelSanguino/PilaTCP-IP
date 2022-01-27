@@ -183,6 +183,33 @@ static int manejador_ping(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_des
 	hacer_ping(nodo, dir_ip);
 	return 0;
 }
+
+static int manejador_ping_con_nodo_intermedio(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {	
+	int CODCMD = -1;
+	CODCMD = EXTRACT_CMD_CODE(buf_tlv);
+
+	tlv_struct_t *tlv = NULL;
+	char *nombre_nodo = NULL;
+	char *dir_ip = NULL;
+	char *ip_nodo_intermedio = NULL;
+
+	TLV_LOOP_BEGIN(buf_tlv, tlv) {
+		if(strncmp(tlv->leaf_id, "nombre-nodo", sizeof("nombre-nodo")) == 0) {
+			nombre_nodo = tlv->value;
+		}
+		if(strncmp(tlv->leaf_id, "dir-ip", sizeof("dir-ip")) == 0) {
+			dir_ip = tlv->value;
+		}
+		if(strncmp(tlv->leaf_id, "ip-nodo-intermedio", sizeof("ip-nodo-intermedio")) == 0) {
+			ip_nodo_intermedio = tlv->value;
+		}
+	} TLV_LOOP_END;
+
+	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);
+	hacer_ping_con_nodo_intermedio(nodo, dir_ip, ip_nodo_intermedio);
+	return 0;
+}
+
 void inic_cli_red() {
 	init_libcli();
 
@@ -298,6 +325,18 @@ void inic_cli_red() {
 					init_param(&dir_ip, LEAF, 0, manejador_ping, 0, STRING, "dir-ip", "Ayuda: dirección IP");
 					libcli_register_param(&ping, &dir_ip);
 					set_param_cmd_code(&dir_ip, CODCMD_HACER_PING);
+					{
+						static param_t nodo_intermedio;
+						init_param(&nodo_intermedio, CMD, "nodo-intermedio", 0, 0, INVALID, 0, "Ayuda: nodo intermedio");
+						libcli_register_param(&dir_ip, &nodo_intermedio);
+						{
+							static param_t ip_nodo_intermedio;
+							init_param(&ip_nodo_intermedio, LEAF, 0, manejador_ping_con_nodo_intermedio, 0, STRING, "ip-nodo-intermedio", "Ayuda: dirección IP del nodo intermedio");
+							libcli_register_param(&nodo_intermedio, &ip_nodo_intermedio);
+							set_param_cmd_code(&ip_nodo_intermedio, CODCMD_HACER_PING_CON_NODO_INTERMEDIO);
+						}
+
+					}
 				}
 			}
 		}	
