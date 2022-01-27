@@ -156,9 +156,9 @@ static int manejador_agregar_ruta(param_t *param, ser_buff_t *buf_tlv, op_mode h
 	} TLV_LOOP_END;
 
 	nodo_t *nodo = obtener_nodo_por_nombre(topo, nombre_nodo);
-	char mascara = atoi(cadena_mascara);
-	mostrar_tabla_ruteo(TABLA_RUTEO_NODO(nodo));
+	char mascara = atoi(cadena_mascara);	
 	tabla_ruteo_agregar_ruta_remota(TABLA_RUTEO_NODO(nodo), destino, mascara, ip_gw, intf_salida);
+	mostrar_tabla_ruteo(TABLA_RUTEO_NODO(nodo));
 	return 0;
 }
 
