@@ -1,6 +1,23 @@
 #include "Topologias.h"
 
 grafico_t * const_primera_topologia() {
+/*
+                                +-----------+
+                         ethR0/0|           |ethR0/1
+           +--------------------+    R0     +---------------------+
+           |         40.1.1.1/24| 122.1.1.0 |20.1.1.1/24          |
+           |                    +-----------+                     |
+           |                                                      |
+           |                                                      |
+           |                                                      |
+           |40.1.1.2/24                                           |20.1.1.2/24
+           |ethR1/0                                               |ethR2/0
+     +-----+-------+                                         +----+------+
+     |             |ethR1/1                           ethR2/1|           |
+     |     R1      +-----------------------------------------+    R2     |
+     |  122.1.1.1  |30.1.1.1/24                   30.1.1.2/24| 122.1.1.2 |
+     +-------------+                                         +-----------+   */
+
 	grafico_t *primer_grafico = crear_nuevo_grafico("Grafico Hola Mundo");
 	nodo_t *nodo_R0 = crear_nodo_grafico(primer_grafico, "R0");
 	//printf("Grafico despues de la primera insercion.\n");
@@ -30,6 +47,34 @@ grafico_t * const_primera_topologia() {
 }
 
 grafico_t * const_topologia_switch_capa2() {
+/*
+                                       +-----------+
+                                       |    H3     |
+                                       | 122.1.1.4 |
+                                       +----+------+
+                                            |ethR3/0 - 10.1.1.4/24       
+                                            |       
+                                            |ethC0/3
+                                       +----+----+                        +----------+
+       +---------+                     |         |                        |          |
+       |         |10.1.1.1/24          |   SWC2  |ethC0/2      10.1.1.3/24|    H2    |
+       |    H0   +---------------------+         +------------------------+ 122.1.1.3|
+       |122.1.1.1|ethR0/0       ethC0/0|         |                ethC0/2 |          |
+       +---------+                     |         |                        |          |
+                                       +----+----+                        +----------+
+                                            |eth0/3     
+                                            |
+                                            |
+                                            |
+                                            |10.1.1.2/24
+                                            |ethC0/1
+                                      +----++------+
+                                      |            |
+                                      |     H1     |
+                                      |  122.1.1.2 |
+                                      |            |
+                                      +------------+    */
+
 	grafico_t *grafico_capa2 = crear_nuevo_grafico("Grafico con 1 switch de Capa 2");
 	nodo_t *nodo_H0 = crear_nodo_grafico(grafico_capa2, "H0");	
 	nodo_t *nodo_H1 = crear_nodo_grafico(grafico_capa2, "H1");
@@ -65,6 +110,37 @@ grafico_t * const_topologia_switch_capa2() {
 }
 
 grafico_t * const_topologia_doble_switch() {
+/*
+                                    +---------+                               +----------+
+                                    |         |                               |          |
+                                    |   H1    |                               |    H4    |
+                                    |122.1.1.2|                               |122.1.1.5 |                                           
+                                    +---+-----+                               +-----+----+                                           
+                                        |10.1.1.2/24                                +10.1.1.5/24                                                
+                                        |ethR1/0                                    |ethR4/0                                                
+                                        |                                           |                                                
+                                        |ethC0/1,AC,V10                             |ethC0/4,AC,V10                                                
+                                  +-----+----+                                +-----+---+                                            
+                                  |          |                                |         |                                            
+   +------+---+                   |          |                                |         |                         +---------+         
+   |    H0    |10.1.1.1/24        |   SW1C2  |ethC0/3                  ethC1/3|  SW2C2  |ethC0/5           ethR5/0|    H5   |         
+   |122.1.1.1 +-------------------|          |+-------------------------------|         +-------------+--------- -+122.1.1.6|         
+   +------+---+ ethR0/0    ethC0/0|          |TR,V10,V11            TR,V10,V11|         |AC,V10        10.1.1.6/24|         |         
+                            AC,V10|          |                                |         |                         +-+-------+         
+                                  +-----+----+                                +----+----+                                            
+                                        |ethC0/2                                   |ethC0/3     
+                                        |AC,V11                                    |AC,V11 
+                                        |                                          |  
+                                        |                                          |  
+                                        |                                          |  
+                                        |                                          |ethR3/0
+                                        |ethR2/0                                   |10.1.1.4/24  
+                                        |10.1.1.3/24                           +---+-----+
+                                   +----+---+|                                 |   H3    |
+                                   |  H2     |                                 |         |
+                                   |122.1.1.3|                                 |122.1.1.4|
+                                   +--------+|                                 +---------+     */
+
 	grafico_t *grafico_doble_sw = crear_nuevo_grafico("Grafico con 2 switches de Capa 2");
 	nodo_t *nodo_H0 = crear_nodo_grafico(grafico_doble_sw, "H0");	
 	nodo_t *nodo_H1 = crear_nodo_grafico(grafico_doble_sw, "H1");
@@ -130,6 +206,14 @@ grafico_t * const_topologia_doble_switch() {
 }
 
 grafico_t * const_topologia_tres_nodos() {
+/*
+	                                         +---------|                                  +----------+
+	+---------+                              |         |                                  |   H3     |
+	|   H0    |ethR0/0                ethR1/0|   H1    |ethR1/1                    ethR2/0|122.1.1.3 |
+	|122.1.1.1+------------------------------+122.1.1.2|+---------------------------------+          |
+	|         |10.1.1.1/24        10.1.1.2/24|         |11.1.1.1/24            11.1.1.2/24|          |
+	+---------+                              +-------+-|                                  +----------+  */
+
 	grafico_t *grafico_tres_nodos = crear_nuevo_grafico("Grafico con 3 nodos");
 	nodo_t *nodo_H0 = crear_nodo_grafico(grafico_tres_nodos, "H0");
 	nodo_t *nodo_H1 = crear_nodo_grafico(grafico_tres_nodos, "H1");
@@ -152,4 +236,3 @@ grafico_t * const_topologia_tres_nodos() {
 
 	return grafico_tres_nodos;
 }
-
