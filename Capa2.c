@@ -201,21 +201,11 @@ bool recibir_trama_capa2_en_interface(interface_t *interface, cab_ethernet_t *ca
 		}
 		if(cab_vlan_8021q) {
 			printf("Error: paquete con etiqueta VLAN recibido en interface %s configurada en modo ACCESO.\n", interface->nombre_if);
-			assert(0);
-			/*if(vlan == -1) return false;
-			else {
-				if(vlan == (short) cab_vlan_8021q->VID) return true;
-				else return false;
-			}*/
+			assert(0);			
 		}
 		else {
 			*etiqueta_vlan = true;
-			return true;
-			/*if(vlan == -1) return true;
-			else {
-				*etiqueta_vlan = true;
-				return true;
-			}*/
+			return true;			
 		}
 	}
 	if(MODO_L2_IF(interface) == TRONCAL) {		

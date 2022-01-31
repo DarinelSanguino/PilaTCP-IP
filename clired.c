@@ -38,8 +38,7 @@ static int mostrar_manejador_topo_red(param_t *param, ser_buff_t *buf_tlv, op_mo
 	return 0;
 }
 
-static int manejador_arp(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {
-	printf("Aquí\n");
+static int manejador_arp(param_t *param, ser_buff_t *buf_tlv, op_mode hab_o_deshab) {	
 	int CODCMD = -1;
 	CODCMD = EXTRACT_CMD_CODE(buf_tlv);
 
@@ -302,8 +301,7 @@ void inic_cli_red() {
 		init_param(&nodo, CMD, "nodo", 0, 0, INVALID, 0, "Arrojar nodo");
 		libcli_register_param(run, &nodo);
 		{
-			static param_t nombre_nodo;
-			//Validación de nombre pendiente
+			static param_t nombre_nodo;			
 			init_param(&nombre_nodo, LEAF, 0, 0, 0, STRING, "nombre-nodo", "Ayuda: nombre del nodo");
 			libcli_register_param(&nodo, &nombre_nodo);
 			{

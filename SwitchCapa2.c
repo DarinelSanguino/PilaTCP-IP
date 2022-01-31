@@ -71,8 +71,7 @@ void enviar_trama_switch_capa2(nodo_t *nodo, interface_t *intf_entrada, char *pa
 		return;
 	}
 	entrada_mac_t *entrada_mac = busqueda_tabla_mac(nodo->prop_nodo->tabla_mac, dir_mac);
-	if(!entrada_mac) {
-		/************************PENDIENTE: ejecutar búsqueda ARP en lugar de enviar el paquete en todas las interfaces.****/
+	if(!entrada_mac) {		
 		enviar_paquete_interfaces_switch_capa2(nodo, intf_entrada, paquete, tamano_paq);
 		return;
 	}

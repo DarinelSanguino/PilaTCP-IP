@@ -1,8 +1,0 @@
-run nodo H0 ping 10.1.1.2
-run nodo H0 ping 122.1.1.2
-run nodo H0 ping 122.1.1.1
-show nodo H0 arp
-run nodo H3 ping 10.1.1.2
-show nodo H0 tabla-ruteo
-run nodo H0 ping 10.1.1.4 nodo-intermedio 10.1.1.2
-run nodo H0 ping 10.1.1.2 nodo-intermedio 10.1.1.1

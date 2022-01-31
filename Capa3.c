@@ -119,14 +119,6 @@ void bajar_paquete_desde_capa3(nodo_t *nodo, unsigned int ip_destino, char *paqu
 }
 
 void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int tamano_datos, unsigned int ip_destino, unsigned int num_protocolo) {
-	/*char dir_ip[TAM_DIR_IP];
-	memset(dir_ip, 0, TAM_DIR_IP);
-	inet_ntop(AF_INET, &ip_destino, dir_ip, TAM_DIR_IP);
-	ruta_l3_t *ruta_l3 = busqueda_tabla_ruteo(nodo->prop_nodo->tabla_ruteo, dir_ip);
-	if(!ruta_l3) {
-		printf("No se encontró alguna entrada coincidente con la dirección IP %s en la tabla del nodo %s.\n", dir_ip, nodo->nombre_nodo);
-		return;
-	}*/
 	char *nuevo_ptr_paq = calloc(1, sizeof(cabecera_ip_t) + tamano_datos);
 	cabecera_ip_t *cabecera_ip = (cabecera_ip_t *) nuevo_ptr_paq;
 	inic_cabecera_ip(cabecera_ip);	
@@ -141,12 +133,6 @@ void _recibir_datos_de_capa_sup_a_capa3(nodo_t *nodo, char *datos, unsigned int 
 	
 	memcpy(nuevo_ptr_paq + sizeof(cabecera_ip_t), datos, tamano_datos);
 	
-	/*unsigned int ip_gw = ip_destino;	
-	if(!ruta_l3->es_local) {
-		inet_pton(AF_INET, ruta_l3->ip_gw, &ip_gw);
-	}*/
-	
-	//bajar_paquete_a_capa2(nodo, ruta_l3->intf_salida, ip_gw, nuevo_ptr_paq, cabecera_ip->longitud_total * 4, IPv4);
 	bajar_paquete_desde_capa3(nodo, ip_destino, nuevo_ptr_paq, cabecera_ip->longitud_total * 4, IPv4);
 	free(nuevo_ptr_paq);
 }
@@ -185,7 +171,6 @@ void recibir_paquete_ip_en_capa3(nodo_t *nodo_rec, interface_t *interface_rec, c
 				memset(ip_destino, 0, TAM_DIR_IP);
 				inet_ntop(AF_INET, &cabecera_ip_interna->ip_destino, ip_destino, TAM_DIR_IP);
 				printf("Paquete IP en IP recibido en el nodo %s. Enviando a la dirección IP de destino %s del paquete interno.\n", nodo_rec->nombre_nodo, ip_destino);
-				//bajar_paquete_a_capa2(nodo_rec, "\0", cabecera_ip_interna->ip_destino, (char *)cabecera_ip_interna, tamano_paq_interno, IPv4);
 				bajar_paquete_desde_capa3(nodo_rec, cabecera_ip_interna->ip_destino, (char *)cabecera_ip_interna, tamano_paq_interno, IPv4);
 			}
 				break;
