@@ -800,3 +800,4 @@ run nodo H0 resolver-arp 10.1.1.2
 run nodo H0 resolver-arp 10.1.1.2
 run nodo H0 resolver-arp 10.1.1.2
 run nodo H1 ping 10.1.1.1
+run nodo H0 ping 10.1.1.2

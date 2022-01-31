@@ -104,6 +104,11 @@ grafico_t * const_topologia_switch_capa2() {
 	conf_intf_modo_l2(SWC2, "ethC0/2", ACCESO);
 	conf_intf_modo_l2(SWC2, "ethC0/3", ACCESO);
 
+	asignar_id_vlan_nodo(SWC2, "ethC0/0", 1);
+	asignar_id_vlan_nodo(SWC2, "ethC0/1", 1);
+	asignar_id_vlan_nodo(SWC2, "ethC0/2", 1);
+	asignar_id_vlan_nodo(SWC2, "ethC0/3", 1);	
+
 	iniciar_hilo_receptor_de_red(grafico_capa2);
 
 	return grafico_capa2;
